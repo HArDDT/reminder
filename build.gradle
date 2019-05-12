@@ -1,0 +1,50 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.4.RELEASE'
+	id 'java'
+}
+
+allprojects {
+	compileJava.options.encoding = 'UTF-8'
+	compileTestJava.options.encoding = 'UTF-8'
+
+	sourceCompatibility = JavaVersion.VERSION_11
+	targetCompatibility = JavaVersion.VERSION_11
+
+	clean {
+		delete 'build', 'out', 'classes'
+	}
+}
+
+wrapper {
+	gradleVersion = '5.4'
+	distributionType = Wrapper.DistributionType.ALL
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'ua.tihonchik.dmitriy'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	//implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	//implementation 'org.springframework.boot:spring-boot-starter-mail'
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	compile group: 'org.webjars', name: 'bootstrap', version: '4.3.1'
+	compile group: 'com.h2database', name: 'h2', version: '1.4.199'
+
+	testCompile group: 'org.testng', name: 'testng', version: '7.0.0-beta4'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+	useTestNG {}
+}
