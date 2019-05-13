@@ -31,16 +31,14 @@ repositories {
 }
 
 dependencies {
-	//implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation('org.postgresql:postgresql')
 	//implementation 'org.springframework.boot:spring-boot-starter-mail'
 	//implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	compile group: 'org.webjars', name: 'bootstrap', version: '4.3.1'
-	compile group: 'com.h2database', name: 'h2', version: '1.4.199'
-
 	testCompile group: 'org.testng', name: 'testng', version: '7.0.0-beta4'
-
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 }
