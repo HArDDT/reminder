@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 
 public class NotificationConverterImpl implements NotificationConverter {
 
@@ -23,8 +24,13 @@ public class NotificationConverterImpl implements NotificationConverter {
      */
     @Override
     public LocalDate getNextValidDate(String expression, LocalDateTime eventDate) {
+        if (Objects.isNull(expression)) {
+            throw new NullPointerException();
+        }
+        String lowerCaseExpression = expression.toLowerCase();
+        checkExpression(lowerCaseExpression);
 
-        this.expression = expression.toLowerCase();
+        this.expression = lowerCaseExpression;
         this.eventDate = eventDate;
 
         String cronExpression = getCronExpression();
@@ -33,7 +39,15 @@ public class NotificationConverterImpl implements NotificationConverter {
         Date firstNotificationDate = Date.from(startDayForGenerator.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date nextRunDate = generator.next(firstNotificationDate);
         return nextRunDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
 
+    private void checkExpression(String expression) {
+        if (expression.isBlank()) {
+            throw new IllegalArgumentException("empty expression!");
+        }
+        if (!expression.matches("^\\d{1,3}\\s?([,/.])?\\s?(day|week|month|year)$")) {
+            throw new IllegalArgumentException("The expression must contain:\n - the number of day and\n - the word duration! - \"day|week|month|year\"");
+        }
     }
 
     private LocalDate getStartDayForGenerator() {
@@ -46,7 +60,6 @@ public class NotificationConverterImpl implements NotificationConverter {
     }
 
     private String getCronExpression() {
-
         String duration = getStringDuration();
         LocalDate firstNotificationDate = getTheFirstNotificationDate();
         String dayOfWeek = firstNotificationDate.getDayOfWeek().toString().substring(0, 3);
@@ -76,7 +89,12 @@ public class NotificationConverterImpl implements NotificationConverter {
     }
 
     private String getStringDuration() {
-        return expression.replaceAll("(\\d|\\W)", "");
+        String clearedExpression = expression.replaceAll("(\\d|\\W)", "");
+        if (clearedExpression.matches("day")) return "day";
+        if (clearedExpression.matches("week")) return "week";
+        if (clearedExpression.matches("month")) return "month";
+        if (clearedExpression.matches("year")) return "year";
+        return "";
     }
 
     private int getCountDayBeforeEvent() {
