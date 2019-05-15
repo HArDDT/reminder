@@ -13,7 +13,7 @@ DROP TABLE IF EXISTS events;
 CREATE TABLE events(
 id serial PRIMARY KEY NOT NULL,
 userid INT NOT NULL,
-description VARCHAR(200),
+description VARCHAR(500),
 eventdate TIMESTAMP NOT NULL,
 activeevent BOOLEAN NOT NULL,
 reminderexpression VARCHAR(100));
