@@ -1,7 +1,10 @@
 package ua.tihonchik.dmitriy.entities;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import java.time.LocalDateTime;
 
+ @JsonDeserialize(as=EventImpl.class)
  public interface Event {
 
      int getId();

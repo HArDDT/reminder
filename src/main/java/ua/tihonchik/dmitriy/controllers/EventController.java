@@ -2,12 +2,11 @@ package ua.tihonchik.dmitriy.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import ua.tihonchik.dmitriy.entities.Event;
-import ua.tihonchik.dmitriy.entities.EventImpl;
 import ua.tihonchik.dmitriy.services.EventService;
-
-import java.util.List;
 
 @RestController
 public class EventController {
@@ -24,7 +23,7 @@ public class EventController {
 //    }
 
     @PostMapping(value = "/protected/create_event")
-    public ResponseEntity<Integer> createEvent(@RequestBody EventImpl event){
+    public ResponseEntity<Integer> createEvent(@RequestBody Event event){
         int idEvent = eventService.createEvent(event);
         return new ResponseEntity<>(idEvent, HttpStatus.OK);
     }

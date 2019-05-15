@@ -5,6 +5,7 @@ HELP.md
 
 ### IntelliJ IDEA ###
 .idea
+testMain.class
 *.iws
 *.iml
 *.ipr
