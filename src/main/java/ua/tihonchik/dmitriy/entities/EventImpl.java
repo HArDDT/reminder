@@ -28,6 +28,24 @@ public class EventImpl implements Event {
         this.reminderExpression = reminderExpression;
     }
 
+    public EventImpl(int id, int userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
+        this.id = id;
+        this.userId = userId;
+        this.description = description;
+        this.eventDate = ZonedDateTime.parse(eventDate, DateTimeFormatter.RFC_1123_DATE_TIME).toLocalDateTime();
+        this.activeEvent = activeEvent;
+        this.reminderExpression = reminderExpression;
+    }
+
+    public EventImpl(int id, int userId, String description, LocalDateTime eventDate, boolean activeEvent, String reminderExpression) {
+        this.id = id;
+        this.userId = userId;
+        this.description = description;
+        this.eventDate = eventDate;
+        this.activeEvent = activeEvent;
+        this.reminderExpression = reminderExpression;
+    }
+
     @Override
     public int getId() {
         return id;

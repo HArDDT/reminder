@@ -9,6 +9,6 @@ public interface EventService {
     int createEvent(Event event);
     void updateEvent(int id, Event event);
     void deleteEvent(int id);
-    Collection<Event> getEvents();
+    Collection<Event> getEvents(int userId);
 
 }

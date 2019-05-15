@@ -31,8 +31,8 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public Collection<Event> getEvents() {
-        return null;
+    public Collection<Event> getEvents(int userId) {
+        return repository.getEvents(userId);
     }
 
 }
