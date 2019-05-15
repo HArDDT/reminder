@@ -1,7 +1,6 @@
-package ua.tihonchik.dmitriy.entities;
+package ua.tihonchik.dmitriy.additional;
 
 import org.springframework.scheduling.support.CronSequenceGenerator;
-import ua.tihonchik.dmitriy.interfaces.NotificationConverter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

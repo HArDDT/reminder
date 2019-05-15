@@ -1,4 +1,4 @@
-package ua.tihonchik.dmitriy.config;
+package ua.tihonchik.dmitriy.configurations;
 
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;

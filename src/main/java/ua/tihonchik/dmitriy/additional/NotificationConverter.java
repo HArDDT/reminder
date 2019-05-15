@@ -1,4 +1,4 @@
-package ua.tihonchik.dmitriy.interfaces;
+package ua.tihonchik.dmitriy.additional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
