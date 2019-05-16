@@ -21,13 +21,18 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void updateEvent(int id, Event event) {
-
+    public Event getEvent(int eventId, int userId) {
+        return repository.getEvent(eventId, userId);
     }
 
     @Override
-    public void deleteEvent(int id) {
+    public void updateEvent(Event event) {
+        repository.updateEvent(event);
+    }
 
+    @Override
+    public void deleteEvent(int eventId, int userId) {
+        repository.deleteEvent(eventId, userId);
     }
 
     @Override

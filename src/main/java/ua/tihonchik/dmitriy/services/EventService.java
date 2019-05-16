@@ -7,8 +7,13 @@ import java.util.Collection;
 public interface EventService {
 
     int createEvent(Event event);
-    void updateEvent(int id, Event event);
-    void deleteEvent(int id);
+
+    Event getEvent(int eventId, int userId);
+
+    void updateEvent(Event event);
+
+    void deleteEvent(int eventId, int userId);
+
     Collection<Event> getEvents(int userId);
 
 }

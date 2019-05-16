@@ -2,6 +2,7 @@ package ua.tihonchik.dmitriy.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,10 +28,25 @@ public class EventController {
         return new ResponseEntity<>(userEvents, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/protected/get_event/{eventId}/{userId}")
+    public Event getEvent(@PathVariable int eventId, @PathVariable int userId) {
+        return eventService.getEvent(eventId, userId);
+    }
+
     @PostMapping(value = "/protected/create_event")
     public ResponseEntity<Integer> createEvent(@RequestBody Event event) {
         int idEvent = eventService.createEvent(event);
         return new ResponseEntity<>(idEvent, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/protected/update_event")
+    public void updateEvent(@RequestBody Event event) {
+        eventService.updateEvent(event);
+    }
+
+    @DeleteMapping(value = "/protected/delete_event/{eventId}/{userId}")
+    public void deleteEvent(@PathVariable int eventId, @PathVariable int userId) {
+        eventService.deleteEvent(eventId, userId);
     }
 
 }
