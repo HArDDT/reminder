@@ -3,7 +3,6 @@ package ua.tihonchik.dmitriy.repositories;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import ua.tihonchik.dmitriy.entities.Event;
 import ua.tihonchik.dmitriy.entities.EventImpl;
 import ua.tihonchik.dmitriy.exceptions.EventCreationException;
