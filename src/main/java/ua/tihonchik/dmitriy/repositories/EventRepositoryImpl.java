@@ -27,7 +27,6 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
-    @Transactional
     public int createEvent(Event event) {
 
         String sqlQuery = "INSERT INTO public.events(userid, description, eventdate, activeevent, reminderexpression) " +
