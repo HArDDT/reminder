@@ -1,9 +1,11 @@
 package ua.tihonchik.dmitriy.repositories;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ua.tihonchik.dmitriy.entities.Event;
 import ua.tihonchik.dmitriy.entities.EventImpl;
+import ua.tihonchik.dmitriy.exceptions.EventNotFoundException;
 
 import java.sql.ResultSet;
 import java.sql.Types;
@@ -61,13 +63,17 @@ public class EventRepositoryImpl implements EventRepository {
 
         Object[] eventFields = List.of(userId, eventId).toArray();
 
-        return template.queryForObject(sqlQuery, eventFields,
-                (ResultSet resultSet, int rowNum) -> new EventImpl(resultSet.getInt("id"),
-                        resultSet.getInt("userid"),
-                        resultSet.getString("description"),
-                        LocalDateTime.parse(resultSet.getString("eventdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        resultSet.getBoolean("activeevent"),
-                        resultSet.getString("reminderexpression")));
+        try {
+            return template.queryForObject(sqlQuery, eventFields,
+                    (ResultSet resultSet, int rowNum) -> new EventImpl(resultSet.getInt("id"),
+                            resultSet.getInt("userid"),
+                            resultSet.getString("description"),
+                            LocalDateTime.parse(resultSet.getString("eventdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                            resultSet.getBoolean("activeevent"),
+                            resultSet.getString("reminderexpression")));
+        } catch (EmptyResultDataAccessException ex) {
+            throw new EventNotFoundException("The event with: user id - " + eventId + ", event id - " + userId + " not found!");
+        }
 
     }
 
