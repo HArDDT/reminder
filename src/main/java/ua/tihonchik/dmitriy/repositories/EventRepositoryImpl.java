@@ -3,8 +3,11 @@ package ua.tihonchik.dmitriy.repositories;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ua.tihonchik.dmitriy.entities.Event;
 import ua.tihonchik.dmitriy.entities.EventImpl;
+import ua.tihonchik.dmitriy.exceptions.EventCreationException;
+import ua.tihonchik.dmitriy.exceptions.EventDeleteException;
 import ua.tihonchik.dmitriy.exceptions.EventNotFoundException;
 
 import java.sql.ResultSet;
@@ -24,18 +27,25 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
+    @Transactional
     public int createEvent(Event event) {
 
-        String sqlQuery = "INSERT INTO public.events(userid, description, eventdate, activeevent, reminderexpression)" +
-                "VALUES (?, ?, ?, ?, ?) RETURNING id";
+        String sqlQuery = "INSERT INTO public.events(userid, description, eventdate, activeevent, reminderexpression) " +
+                "(select ?, ?, ?, ?, ? " +
+                "where exists (select * from public.users where id = ?))" +
+                "RETURNING id";
 
         Object[] eventFields = {event.getUserId(),
                 event.getDescription(),
                 event.getEventDate(),
                 event.isActiveEvent(),
-                event.getReminderExpression()};
-
-        return template.queryForObject(sqlQuery, Integer.class, eventFields);
+                event.getReminderExpression(),
+                event.getUserId()};
+        try {
+            return template.queryForObject(sqlQuery, Integer.class, eventFields);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new EventCreationException("User with id - " + event.getUserId() + " not found!");
+        }
 
     }
 
@@ -98,7 +108,11 @@ public class EventRepositoryImpl implements EventRepository {
                 Types.INTEGER,
                 Types.INTEGER};
 
-        template.update(sqlQuery, eventFields, argTypes);
+        int countOfRow = template.update(sqlQuery, eventFields, argTypes);
+
+        if (countOfRow == 0) {
+            throw new EventCreationException("Event update failed: event with: user id - " + event.getId() + ", event id - " + event.getUserId() + " not found!");
+        }
 
     }
 
@@ -113,7 +127,11 @@ public class EventRepositoryImpl implements EventRepository {
                 Types.INTEGER,
                 Types.INTEGER};
 
-        template.update(sqlQuery, eventFields, argTypes);
+        int countOfRow = template.update(sqlQuery, eventFields, argTypes);
+
+        if (countOfRow == 0) {
+            throw new EventDeleteException("Error deleting event: event with: user id - " + userId + ", event id - " + eventId + " not found!");
+        }
 
     }
 }
