@@ -1,5 +1,7 @@
 package ua.tihonchik.dmitriy.repositories;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,7 @@ import java.util.List;
 public class EventRepositoryImpl implements EventRepository {
 
     private JdbcTemplate template;
+    private Logger logger = LoggerFactory.getLogger(EventRepositoryImpl.class);
 
     public EventRepositoryImpl(JdbcTemplate template) {
         this.template = template;
@@ -41,8 +44,10 @@ public class EventRepositoryImpl implements EventRepository {
                 event.getUserId()};
         try {
             return template.queryForObject(sqlQuery, Integer.class, eventFields);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new EventCreationException("User with id - " + event.getUserId() + " not found!");
+        } catch (EmptyResultDataAccessException exception) {
+            String errorMessage = "User with id - " + event.getUserId() + " not found!";
+            logger.error(errorMessage);
+            throw new EventCreationException(errorMessage, exception);
         }
 
     }
@@ -69,7 +74,7 @@ public class EventRepositoryImpl implements EventRepository {
 
         String sqlQuery = "SELECT id, userid, description, eventdate, activeevent, reminderexpression FROM public.events where userid = ? and id = ?";
 
-        Object[] eventFields = List.of(userId, eventId).toArray();
+        Object[] eventFields = {userId, eventId};
 
         try {
             return template.queryForObject(sqlQuery, eventFields,
@@ -79,8 +84,10 @@ public class EventRepositoryImpl implements EventRepository {
                             LocalDateTime.parse(resultSet.getString("eventdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                             resultSet.getBoolean("activeevent"),
                             resultSet.getString("reminderexpression")));
-        } catch (EmptyResultDataAccessException ex) {
-            throw new EventNotFoundException("The event with: user id - " + eventId + ", event id - " + userId + " not found!");
+        } catch (EmptyResultDataAccessException exception) {
+            String errorMessage = "The event with: user id - " + userId + ", event id - " + eventId + " not found!";
+            logger.error(errorMessage);
+            throw new EventNotFoundException(errorMessage);
         }
 
     }
@@ -109,7 +116,9 @@ public class EventRepositoryImpl implements EventRepository {
         int countOfRow = template.update(sqlQuery, eventFields, argTypes);
 
         if (countOfRow == 0) {
-            throw new EventCreationException("Event update failed: event with: user id - " + event.getId() + ", event id - " + event.getUserId() + " not found!");
+            String errorMessage = "Event update failed: event with: user id - " + event.getId() + ", event id - " + event.getUserId() + " not found!";
+            logger.error(errorMessage);
+            throw new EventCreationException(errorMessage);
         }
 
     }
@@ -128,7 +137,9 @@ public class EventRepositoryImpl implements EventRepository {
         int countOfRow = template.update(sqlQuery, eventFields, argTypes);
 
         if (countOfRow == 0) {
-            throw new EventDeleteException("Error deleting event: event with: user id - " + userId + ", event id - " + eventId + " not found!");
+            String errorMessage = "Error deleting event: event with: user id - " + userId + ", event id - " + eventId + " not found!";
+            logger.error(errorMessage);
+            throw new EventDeleteException(errorMessage);
         }
 
     }
