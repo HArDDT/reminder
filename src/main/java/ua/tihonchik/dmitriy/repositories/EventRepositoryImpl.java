@@ -57,7 +57,7 @@ public class EventRepositoryImpl implements EventRepository {
 
         String sqlQuery = "SELECT id, userid, description, eventdate, activeevent, reminderexpression FROM public.events where userid = ?";
 
-        Object[] eventFields = List.of(userId).toArray();
+        Object[] eventFields = {userId};
 
         return template.query(sqlQuery, eventFields,
                 (ResultSet resultSet, int rowNum) -> new EventImpl(resultSet.getInt("id"),
