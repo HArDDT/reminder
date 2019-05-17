@@ -16,7 +16,6 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.List;
 
 @Repository
 public class EventRepositoryImpl implements EventRepository {
