@@ -9,9 +9,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import ua.tihonchik.dmitriy.entities.UserDetailsCustom;
+import ua.tihonchik.dmitriy.entities.User;
 
 import java.sql.ResultSet;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class UserRepositoryImpl implements UserRepository {
 
         try {
             return template.queryForObject(sqlQuery, eventFields,
-                    (ResultSet resultSet, int rowNum) -> new UserDetailsCustom(resultSet.getInt("id"),
+                    (ResultSet resultSet, int rowNum) -> new User(resultSet.getInt("id"),
                             resultSet.getString("email"),
                             resultSet.getString("name"),
                             resultSet.getString("password"),(
@@ -45,6 +46,51 @@ public class UserRepositoryImpl implements UserRepository {
             throw new UsernameNotFoundException(errorMessage);
         }
 
+    }
+
+    @Override
+    public int createUser(User user) {
+
+        String sqlQuery = "INSERT INTO public.users( " +
+                "email, name, admin, superadmin, password) " +
+                "VALUES (?, ?, ?, ?, ?)" +
+                "RETURNING id";
+
+        Object[] userFields = {
+                user.getUsername(),
+                user.getName(),
+                user.hasRole("admin"),
+                user.hasRole("super_admin"),
+                user.getPassword()
+        };
+
+        try {
+            return template.queryForObject(sqlQuery, Integer.class, userFields);
+        } catch (EmptyResultDataAccessException exception) {
+            String errorMessage = "User: " + user.getUsername() + " not created!";
+            logger.error(errorMessage, exception);
+            throw exception;
+        }
+    }
+
+    @Override
+    public User getUserById(int id) {
+        return null;
+    }
+
+    @Override
+    public void updateUser(User user) {
+
+    }
+
+    @Override
+    public void deleteUser(int id) {
+
+    }
+
+    @Override
+    public Collection<User> getUsers(int id) {
+        return null;
     }
 
     Set<GrantedAuthority> getRolesFromBoolean(boolean ... booleans){
