@@ -1,5 +1,7 @@
 package ua.tihonchik.dmitriy.entities;
 
+import org.springframework.beans.factory.annotation.Lookup;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
+@Scope("prototype")
 public class User implements UserDetails {
 
     private int id;
@@ -87,6 +90,11 @@ public class User implements UserDetails {
         return getAuthorities().stream().anyMatch((s) -> s.getAuthority().toLowerCase().equals(role.toLowerCase()));
     }
 
+//    @Lookup
+//    public User getUserPrototypeBean(){
+//        return new User();
+//    }
+
     public int getId() {
         return id;
     }
@@ -113,5 +121,13 @@ public class User implements UserDetails {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

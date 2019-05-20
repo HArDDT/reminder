@@ -11,6 +11,8 @@ public interface UserService extends UserDetailsService {
 
     User getUserById(int id);
 
+    User getUserPrototypeBean();
+
     void updateUser(User user);
 
     void deleteUser(int id);
