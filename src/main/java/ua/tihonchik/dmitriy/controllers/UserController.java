@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ua.tihonchik.dmitriy.entities.User;
+import ua.tihonchik.dmitriy.security.CustomUserDetails;
 import ua.tihonchik.dmitriy.services.UserService;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public class UserController {
         }else {
             roles = (List)objRoles;
         }
-        User user = userService.getUserPrototypeBean();
+        CustomUserDetails user = userService.getUserPrototypeBean();
         user.setEmail(String.valueOf(payload.get("email")));
         user.setPassword(encoder.encode(String.valueOf(payload.get("password"))));
         user.setName(String.valueOf(payload.get("name")));

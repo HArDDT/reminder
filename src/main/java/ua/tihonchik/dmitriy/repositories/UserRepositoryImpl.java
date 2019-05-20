@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ua.tihonchik.dmitriy.entities.User;
+import ua.tihonchik.dmitriy.entities.UserImpl;
 
 import java.sql.ResultSet;
 import java.util.Collection;
@@ -20,10 +21,12 @@ import java.util.Set;
 public class UserRepositoryImpl implements UserRepository {
 
     private JdbcTemplate template;
+    private UserDetails userDetails;
     private Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
 
-    public UserRepositoryImpl(JdbcTemplate template) {
+    public UserRepositoryImpl(JdbcTemplate template, UserDetails userDetails) {
         this.template = template;
+        this.userDetails = userDetails;
     }
 
     @Override
@@ -33,19 +36,28 @@ public class UserRepositoryImpl implements UserRepository {
         Object[] eventFields = {username};
 
         try {
-            return template.queryForObject(sqlQuery, eventFields,
-                    (ResultSet resultSet, int rowNum) -> new User(resultSet.getInt("id"),
+            UserImpl user = template.queryForObject(sqlQuery, eventFields,
+                    (ResultSet resultSet, int rowNum) -> new UserImpl(
+                            resultSet.getInt("id"),
                             resultSet.getString("email"),
                             resultSet.getString("name"),
-                            resultSet.getString("password"),(
-                            getRolesFromBoolean(resultSet.getBoolean("admin"), resultSet.getBoolean("superadmin")))
-                    ));
+                            resultSet.getString("password"),
+                            resultSet.getBoolean("admin"),
+                            resultSet.getBoolean("admin"),
+                            resultSet.getBoolean("superadmin"))
+            );
+            return getUserDetailsFromUser(user);
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with login - " + username + " not found!";
             logger.error(errorMessage);
             throw new UsernameNotFoundException(errorMessage);
         }
 
+    }
+
+    private UserDetails getUserDetailsFromUser(User user) {
+        //userDetails.
+        return null;
     }
 
     @Override

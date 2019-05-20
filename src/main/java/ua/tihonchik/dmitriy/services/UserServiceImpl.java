@@ -3,11 +3,10 @@ package ua.tihonchik.dmitriy.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Lookup;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ua.tihonchik.dmitriy.entities.User;
 import ua.tihonchik.dmitriy.repositories.UserRepository;
+import ua.tihonchik.dmitriy.security.CustomUserDetails;
 
 import java.util.Collection;
 
@@ -19,11 +18,6 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl(UserRepository repository) {
         this.repository = repository;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.loadUserByUsername(username);
     }
 
     @Override
@@ -51,10 +45,5 @@ public class UserServiceImpl implements UserService {
         return repository.getUsers(id);
     }
 
-    @Override
-    @Lookup
-    public User getUserPrototypeBean(){
-        return null;
-    }
 
 }
