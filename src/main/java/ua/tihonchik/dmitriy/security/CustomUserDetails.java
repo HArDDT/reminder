@@ -1,15 +1,11 @@
 package ua.tihonchik.dmitriy.security;
 
-import org.springframework.beans.factory.annotation.Lookup;
-import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Component
 public class CustomUserDetails implements UserDetails {
@@ -20,32 +16,6 @@ public class CustomUserDetails implements UserDetails {
     private String name;
     private boolean enabled = true;
     private Set<GrantedAuthority> roles;
-
-    public CustomUserDetails() {
-
-    }
-
-    public CustomUserDetails(int id, String email, String name, String password, Set<GrantedAuthority> roles) {
-        this.id = id;
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        this.roles = roles;
-    }
-
-    public CustomUserDetails(String email, String password, String name, Set<GrantedAuthority> roles) {
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        this.roles = roles;
-    }
-
-    public CustomUserDetails(String email, String password, String name, Collection<String> roles) {
-        this.email = email;
-        this.name = name;
-        this.password = password;
-        setRoles(roles);
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -82,9 +52,9 @@ public class CustomUserDetails implements UserDetails {
         return enabled;
     }
 
-    public boolean hasRole(String role) {
-        return getAuthorities().stream().anyMatch((s) -> s.getAuthority().toLowerCase().equals(role.toLowerCase()));
-    }
+//    public boolean hasRole(String role) {
+//        return getAuthorities().stream().anyMatch((s) -> s.getAuthority().toLowerCase().equals(role.toLowerCase()));
+//    }
 
     public int getId() {
         return id;
@@ -94,8 +64,27 @@ public class CustomUserDetails implements UserDetails {
         this.id = id;
     }
 
-    public void setRoles(Collection<String> stringRoles) {
-        this.roles = stringRoles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+//    public void setRoles(Collection<String> stringRoles) {
+//        this.roles = stringRoles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toSet());
+//    }
+
+    public void setRoles(Set<GrantedAuthority> roles) {
+        this.roles = roles;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

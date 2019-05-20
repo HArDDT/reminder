@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import ua.tihonchik.dmitriy.security.CustomUserDetailService;
 import ua.tihonchik.dmitriy.services.UserService;
 
 @Configuration
@@ -19,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsService userService;
 
-    public SecurityConfig(UserDetailsService userService) {
+    public SecurityConfig(CustomUserDetailService userService) {
         this.userService = userService;
     }
 

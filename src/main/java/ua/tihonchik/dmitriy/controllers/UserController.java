@@ -4,6 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import ua.tihonchik.dmitriy.entities.User;
 import ua.tihonchik.dmitriy.security.CustomUserDetails;
 import ua.tihonchik.dmitriy.services.UserService;
 
@@ -26,27 +27,27 @@ public class UserController {
 
     @PostMapping(value = "/protected/create_user")
     public int createEvent(@RequestBody Map<String, Object> payload) {
+        //return userService.createUser(user);
+//        Object objRoles = payload.get("roles");
+//        List roles;
+//        if (Objects.isNull(objRoles) || !(objRoles instanceof List)){
+//            throw new IllegalArgumentException("");
+//        }else {
+//            roles = (List)objRoles;
+//        }
+//        CustomUserDetails user = .getUserPrototypeBean();
+//        user.setEmail(String.valueOf(payload.get("email")));
+//        user.setPassword(encoder.encode(String.valueOf(payload.get("password"))));
+//        user.setName(String.valueOf(payload.get("name")));
+//        user.setRoles(roles);
+//
+//        return userService.createUser(user);
 
-        Object objRoles = payload.get("roles");
-        List roles;
-        if (Objects.isNull(objRoles) || !(objRoles instanceof List)){
-            throw new IllegalArgumentException("");
-        }else {
-            roles = (List)objRoles;
-        }
-        CustomUserDetails user = userService.getUserPrototypeBean();
-        user.setEmail(String.valueOf(payload.get("email")));
-        user.setPassword(encoder.encode(String.valueOf(payload.get("password"))));
-        user.setName(String.valueOf(payload.get("name")));
-        user.setRoles(roles);
-
-        return userService.createUser(user);
-
-//        return userService.createUser(new User(
-//                String.valueOf(payload.get("email")),
-//                encoder.encode(String.valueOf(payload.get("password"))),
-//                String.valueOf(payload.get("name")),
-//                (List)(payload.get("roles"))));
+        return userService.createUser(new User(
+                String.valueOf(payload.get("email")),
+                encoder.encode(String.valueOf(payload.get("password"))),
+                String.valueOf(payload.get("name")),
+                (List)(payload.get("roles"))));
     }
 
 }

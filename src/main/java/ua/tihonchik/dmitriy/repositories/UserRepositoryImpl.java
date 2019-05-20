@@ -4,60 +4,44 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import ua.tihonchik.dmitriy.entities.User;
-import ua.tihonchik.dmitriy.entities.UserImpl;
 
-import java.sql.ResultSet;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @Component
 public class UserRepositoryImpl implements UserRepository {
 
     private JdbcTemplate template;
     private UserDetails userDetails;
+    private RowMapper<UserDetails> rw;
+
     private Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
 
-    public UserRepositoryImpl(JdbcTemplate template, UserDetails userDetails) {
+    public UserRepositoryImpl(JdbcTemplate template, UserDetails userDetails, RowMapper<UserDetails> rw) {
         this.template = template;
         this.userDetails = userDetails;
+        this.rw = rw;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
         String sqlQuery = "SELECT id, email, name, admin, superadmin, password FROM public.users where email = ?";
 
         Object[] eventFields = {username};
 
         try {
-            UserImpl user = template.queryForObject(sqlQuery, eventFields,
-                    (ResultSet resultSet, int rowNum) -> new UserImpl(
-                            resultSet.getInt("id"),
-                            resultSet.getString("email"),
-                            resultSet.getString("name"),
-                            resultSet.getString("password"),
-                            resultSet.getBoolean("admin"),
-                            resultSet.getBoolean("admin"),
-                            resultSet.getBoolean("superadmin"))
-            );
-            return getUserDetailsFromUser(user);
+            return template.queryForObject(sqlQuery, eventFields, rw);
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with login - " + username + " not found!";
             logger.error(errorMessage);
             throw new UsernameNotFoundException(errorMessage);
         }
 
-    }
-
-    private UserDetails getUserDetailsFromUser(User user) {
-        //userDetails.
-        return null;
     }
 
     @Override
@@ -69,7 +53,7 @@ public class UserRepositoryImpl implements UserRepository {
                 "RETURNING id";
 
         Object[] userFields = {
-                user.getUsername(),
+                user.getEmail(),
                 user.getName(),
                 user.hasRole("admin"),
                 user.hasRole("super_admin"),
@@ -79,7 +63,7 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             return template.queryForObject(sqlQuery, Integer.class, userFields);
         } catch (EmptyResultDataAccessException exception) {
-            String errorMessage = "User: " + user.getUsername() + " not created!";
+            String errorMessage = "User: " + user.getEmail() + " not created!";
             logger.error(errorMessage, exception);
             throw exception;
         }
@@ -103,18 +87,6 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Collection<User> getUsers(int id) {
         return null;
-    }
-
-    Set<GrantedAuthority> getRolesFromBoolean(boolean ... booleans){
-        Set<GrantedAuthority> roles = new HashSet<>();
-        roles.add(new SimpleGrantedAuthority("USER"));
-        if (booleans.length>=1 && booleans[0]){
-            roles.add(new SimpleGrantedAuthority("ADMIN"));
-        }
-        if (booleans.length>=2 && booleans[1]){
-            roles.add(new SimpleGrantedAuthority("SUPER_ADMIN"));
-        }
-        return roles;
     }
 
 }
