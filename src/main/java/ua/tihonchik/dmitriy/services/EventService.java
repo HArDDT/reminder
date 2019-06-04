@@ -8,11 +8,11 @@ public interface EventService {
 
     int createEvent(Event event);
 
-    Event getEvent(int eventId, int userId);
+    Event getEvent(int eventId);
 
     void updateEvent(Event event);
 
-    void deleteEvent(int eventId, int userId);
+    void deleteEvent(int eventId);
 
     Collection<Event> getEvents(int userId);
 

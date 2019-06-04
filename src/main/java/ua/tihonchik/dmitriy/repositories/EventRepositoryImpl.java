@@ -4,17 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ua.tihonchik.dmitriy.additional.EventRowMapper;
 import ua.tihonchik.dmitriy.entities.Event;
-import ua.tihonchik.dmitriy.entities.EventImpl;
 import ua.tihonchik.dmitriy.exceptions.EventCreationException;
 import ua.tihonchik.dmitriy.exceptions.EventDeleteException;
 import ua.tihonchik.dmitriy.exceptions.EventNotFoundException;
 
-import java.sql.ResultSet;
 import java.sql.Types;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 @Repository
@@ -22,28 +20,28 @@ public class EventRepositoryImpl implements EventRepository {
 
     private JdbcTemplate template;
     private Logger logger = LoggerFactory.getLogger(EventRepositoryImpl.class);
+    private RowMapper<Event> rowMapper;
 
-    public EventRepositoryImpl(JdbcTemplate template) {
+    public EventRepositoryImpl(JdbcTemplate template, EventRowMapper rowMapper) {
         this.template = template;
+        this.rowMapper = rowMapper;
     }
 
     @Override
     public int createEvent(Event event) {
 
-        String sqlQuery = "INSERT INTO public.events(userid, description, eventdate, activeevent, reminderexpression) " +
-                "(select ?, ?, ?, ?, ? " +
-                "where exists (select * from public.users where id = ?))" +
+        String sqlQuery = "insert into public.events(userid, description, eventdate, activeevent, reminderexpression) " +
+                "values (?, ?, ?, ?, ? )" +
                 "RETURNING id";
 
         Object[] eventFields = {event.getUserId(),
                 event.getDescription(),
                 event.getEventDate(),
                 event.isActiveEvent(),
-                event.getReminderExpression(),
-                event.getUserId()};
+                event.getReminderExpression()};
         try {
             return template.queryForObject(sqlQuery, Integer.class, eventFields);
-        } catch (EmptyResultDataAccessException exception) {
+        } catch (Exception exception) {
             String errorMessage = "User with id - " + event.getUserId() + " not found!";
             logger.error(errorMessage);
             throw new EventCreationException(errorMessage, exception);
@@ -54,37 +52,25 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public Collection<Event> getEvents(int userId) {
 
-        String sqlQuery = "SELECT id, userid, description, eventdate, activeevent, reminderexpression FROM public.events where userid = ?";
+        String sqlQuery = "select id, userid, description, eventdate, activeevent, reminderexpression from public.events where userid = ?";
 
         Object[] eventFields = {userId};
 
-        return template.query(sqlQuery, eventFields,
-                (ResultSet resultSet, int rowNum) -> new EventImpl(resultSet.getInt("id"),
-                        resultSet.getInt("userid"),
-                        resultSet.getString("description"),
-                        LocalDateTime.parse(resultSet.getString("eventdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        resultSet.getBoolean("activeevent"),
-                        resultSet.getString("reminderexpression")));
+        return template.query(sqlQuery, eventFields, rowMapper);
 
     }
 
     @Override
-    public Event getEvent(int eventId, int userId) {
+    public Event getEvent(int eventId) {
 
-        String sqlQuery = "SELECT id, userid, description, eventdate, activeevent, reminderexpression FROM public.events where userid = ? and id = ?";
+        String sqlQuery = "select id, userid, description, eventdate, activeevent, reminderexpression from public.events where id = ?";
 
-        Object[] eventFields = {userId, eventId};
+        Object[] eventFields = {eventId};
 
         try {
-            return template.queryForObject(sqlQuery, eventFields,
-                    (ResultSet resultSet, int rowNum) -> new EventImpl(resultSet.getInt("id"),
-                            resultSet.getInt("userid"),
-                            resultSet.getString("description"),
-                            LocalDateTime.parse(resultSet.getString("eventdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                            resultSet.getBoolean("activeevent"),
-                            resultSet.getString("reminderexpression")));
+            return template.queryForObject(sqlQuery, eventFields, rowMapper);
         } catch (EmptyResultDataAccessException exception) {
-            String errorMessage = "The event with: user id - " + userId + ", event id - " + eventId + " not found!";
+            String errorMessage = "The event with id - " + eventId + " not found!";
             logger.error(errorMessage);
             throw new EventNotFoundException(errorMessage);
         }
@@ -94,28 +80,20 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public void updateEvent(Event event) {
 
-        String sqlQuery = "UPDATE public.events SET description=?, eventdate=?, activeevent=?, reminderexpression=?" +
-                " WHERE userid = ? AND id = ?";
+        String sqlQuery = "update public.events set description = ?, eventdate = ?, activeevent = ?, reminderexpression = ? where id = ?";
 
         Object[] eventFields = {event.getDescription(),
                 event.getEventDate(),
                 event.isActiveEvent(),
                 event.getReminderExpression(),
-                event.getUserId(),
                 event.getId()};
 
-        int[] argTypes = {
-                Types.VARCHAR,
-                Types.TIMESTAMP,
-                Types.BOOLEAN,
-                Types.VARCHAR,
-                Types.INTEGER,
-                Types.INTEGER};
+        int[] argTypes = {Types.VARCHAR, Types.TIMESTAMP, Types.BOOLEAN, Types.VARCHAR, Types.INTEGER};
 
         int countOfRow = template.update(sqlQuery, eventFields, argTypes);
 
         if (countOfRow == 0) {
-            String errorMessage = "Event update failed: event with: user id - " + event.getId() + ", event id - " + event.getUserId() + " not found!";
+            String errorMessage = "Event update failed: event with id - " + event.getId() + ", not found!";
             logger.error(errorMessage);
             throw new EventCreationException(errorMessage);
         }
@@ -123,20 +101,18 @@ public class EventRepositoryImpl implements EventRepository {
     }
 
     @Override
-    public void deleteEvent(int eventId, int userId) {
+    public void deleteEvent(int eventId) {
 
-        String sqlQuery = "DELETE FROM public.events WHERE id = ? AND userid = ?";
+        String sqlQuery = "delete from public.events where id = ?";
 
-        Object[] eventFields = {eventId, userId};
+        Object[] eventFields = {eventId};
 
-        int[] argTypes = {
-                Types.INTEGER,
-                Types.INTEGER};
+        int[] argTypes = {Types.INTEGER};
 
         int countOfRow = template.update(sqlQuery, eventFields, argTypes);
 
         if (countOfRow == 0) {
-            String errorMessage = "Error deleting event: event with: user id - " + userId + ", event id - " + eventId + " not found!";
+            String errorMessage = "Error deleting event: event with id - " + eventId + " not found!";
             logger.error(errorMessage);
             throw new EventDeleteException(errorMessage);
         }

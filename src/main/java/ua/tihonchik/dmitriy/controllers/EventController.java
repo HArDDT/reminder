@@ -21,13 +21,13 @@ public class EventController {
     }
 
     @GetMapping(value = "/protected/get_events/{userId}")
-    public Collection<Event> getEvent(@PathVariable int userId) {
+    public Collection<Event> getEvents(@PathVariable int userId) {
         return eventService.getEvents(userId);
     }
 
-    @GetMapping(value = "/protected/get_event/{eventId}/{userId}")
-    public Event getEvent(@PathVariable int eventId, @PathVariable int userId) {
-        return eventService.getEvent(eventId, userId);
+    @GetMapping(value = "/protected/get_event/{eventId}")
+    public Event getEvent(@PathVariable int eventId) {
+        return eventService.getEvent(eventId);
     }
 
     @PostMapping(value = "/protected/create_event")
@@ -40,9 +40,9 @@ public class EventController {
         eventService.updateEvent(event);
     }
 
-    @DeleteMapping(value = "/protected/delete_event/{eventId}/{userId}")
-    public void deleteEvent(@PathVariable int eventId, @PathVariable int userId) {
-        eventService.deleteEvent(eventId, userId);
+    @DeleteMapping(value = "/protected/delete_event/{eventId}")
+    public void deleteEvent(@PathVariable int eventId) {
+        eventService.deleteEvent(eventId);
     }
 
 }
