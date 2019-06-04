@@ -1,20 +1,19 @@
 package ua.tihonchik.dmitriy.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Lookup;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import ua.tihonchik.dmitriy.entities.User;
 import ua.tihonchik.dmitriy.repositories.UserRepository;
-import ua.tihonchik.dmitriy.security.CustomUserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 @Component
 public class UserServiceImpl implements UserService {
 
     private UserRepository repository;
-    private Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     public UserServiceImpl(UserRepository repository) {
         this.repository = repository;
@@ -22,7 +21,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int createUser(User user) {
+        user.setRoles(new HashSet<GrantedAuthority>(Collections.singleton(new SimpleGrantedAuthority("USER"))));
         return repository.createUser(user);
+    }
+
+    @Override
+    public User getUserByEmail(String email) {
+        return repository.getUserByEmail(email);
     }
 
     @Override
@@ -32,7 +37,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateUser(User user) {
-        repository.updateUser(user);
+       repository.updateUser(user);
     }
 
     @Override
@@ -41,8 +46,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<User> getUsers(int id) {
-        return repository.getUsers(id);
+    public Collection<User> getUsers() {
+        return repository.getUsers();
     }
 
 
