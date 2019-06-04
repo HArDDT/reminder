@@ -8,7 +8,7 @@ password VARCHAR(100));
 
 CREATE TABLE events(
 id serial PRIMARY KEY NOT NULL,
-userid INT NOT NULL,
+userid INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
 description VARCHAR(500),
 eventdate TIMESTAMP NOT NULL,
 activeevent BOOLEAN NOT NULL,
