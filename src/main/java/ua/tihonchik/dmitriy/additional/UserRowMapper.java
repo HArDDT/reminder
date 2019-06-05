@@ -2,6 +2,7 @@ package ua.tihonchik.dmitriy.additional;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 import ua.tihonchik.dmitriy.entities.UserImpl;
 
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+@Component
 public class UserRowMapper implements RowMapper<UserImpl> {
 
     @Override
