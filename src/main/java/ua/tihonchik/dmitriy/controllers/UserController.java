@@ -1,5 +1,7 @@
 package ua.tihonchik.dmitriy.controllers;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,16 @@ public class UserController {
     @PostMapping(value = "/protected/create_user")
     public int createEvent(@RequestBody UserImpl user) {
         return userService.createUser((User) user);
+    }
+
+    @GetMapping(value = "/protected/get-user-by-email/{email}")
+    public User getUserByEmail(@PathVariable String email){
+        return userService.getUserByEmail(email);
+    }
+
+    @GetMapping(value = "/protected/get-user-by-id/{id}")
+    public User getUserById(@PathVariable int id){
+        return userService.getUserById(id);
     }
 
 }

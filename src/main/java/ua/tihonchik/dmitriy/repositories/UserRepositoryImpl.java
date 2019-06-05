@@ -3,13 +3,12 @@ package ua.tihonchik.dmitriy.repositories;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import ua.tihonchik.dmitriy.additional.UserRowMapper;
 import ua.tihonchik.dmitriy.entities.User;
-import ua.tihonchik.dmitriy.entities.UserImpl;
 
 import java.util.Collection;
 
@@ -60,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
         Object[] eventFields = {id};
 
         try {
-            return (User) template.queryForObject(sqlQuery, eventFields, new BeanPropertyRowMapper(UserImpl.class));
+            return template.queryForObject(sqlQuery, eventFields, new UserRowMapper());
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with id - " + id + " not found!";
             logger.error(errorMessage);
@@ -78,7 +77,7 @@ public class UserRepositoryImpl implements UserRepository {
         Object[] eventFields = {email};
 
         try {
-            return (User) template.queryForObject(sqlQuery, eventFields, new BeanPropertyRowMapper(UserImpl.class));
+            return template.queryForObject(sqlQuery, eventFields, new UserRowMapper());
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with email - " + email + " not found!";
             logger.error(errorMessage);
