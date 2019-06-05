@@ -12,7 +12,9 @@ import ua.tihonchik.dmitriy.additional.UserRowMapper;
 import ua.tihonchik.dmitriy.entities.User;
 import ua.tihonchik.dmitriy.entities.UserImpl;
 
-import java.util.Collection;
+import java.sql.Types;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class UserRepositoryImpl implements UserRepository {
@@ -90,18 +92,26 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void updateUser(User user) {
-
-    }
-
-    @Override
     public void deleteUser(int id) {
 
+        String sqlQuery = "delete from public.users where id = ?;";
+
+        Object[] fields = {id};
+        int[] argTypes = {Types.INTEGER};
+        int countOfRow = template.update(sqlQuery, fields, argTypes);
+
+        if (countOfRow == 0) {
+            String errorMessage = "Deletion error: dashboard with: id - " + id + ", not found!";
+            logger.error(errorMessage);
+            throw new UsernameNotFoundException(errorMessage);
+        }
+
     }
 
     @Override
-    public Collection<User> getUsers() {
-        return null;
+    public List<User> getUsers() {
+        String sqlQuery = "select id, email, name, admin, superadmin, password from public.users;";
+        return template.query(sqlQuery, userRowMapper).stream().collect(Collectors.toList());
     }
 
 }

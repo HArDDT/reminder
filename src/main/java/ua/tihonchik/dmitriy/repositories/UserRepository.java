@@ -12,8 +12,6 @@ public interface UserRepository {
 
     User getUserByEmail(String email);
 
-    void updateUser(User user);
-
     void deleteUser(int id);
 
     Collection<User> getUsers();
