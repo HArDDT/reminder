@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import ua.tihonchik.dmitriy.security.TokenAuthenticationFilter;
 
 @Configuration
@@ -24,27 +25,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
-
-        http.csrf().disable();
-
         http
+                .csrf().disable()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "/css/*", "*css", "*js").permitAll()
-                .antMatchers("protected/**").authenticated()
-                .anyRequest().permitAll()
+                .antMatchers("/", "*css", "*js", "/login", "/logout").permitAll()
+                .antMatchers("/protected/**").authenticated()
+                .and()
+                .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .formLogin()
                 //.successHandler(mySuccessHandler)
                 //.failureHandler(myFailureHandler)
                 .and()
-                .logout();
-
-//                .and()
-//                .formLogin().permitAll()
-//                .and()
-//                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll();
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll();
 
     }
 
