@@ -6,11 +6,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
 import ua.tihonchik.dmitriy.entities.User;
 import ua.tihonchik.dmitriy.entities.UserImpl;
 import ua.tihonchik.dmitriy.services.UserService;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -28,12 +30,12 @@ public class UserController {
 
     @GetMapping(value = "/protected/get-user-by-email/{email}")
     public User getUserByEmail(@PathVariable String email){
-        return userService.getUserByEmail(email);
+        return userService.getUserByEmail(email).orElseGet(null);
     }
 
     @GetMapping(value = "/protected/get-user-by-id/{id}")
     public User getUserById(@PathVariable int id){
-        return userService.getUserById(id);
+        return userService.getUserById(id).orElseGet(null);
     }
 
     @GetMapping(value = "/protected/get-users")

@@ -1,17 +1,17 @@
 package ua.tihonchik.dmitriy.services;
 
 import ua.tihonchik.dmitriy.entities.User;
-import ua.tihonchik.dmitriy.entities.UserImpl;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface UserService {
 
     int createUser(User user);
 
-    User getUserById(int id);
+    Optional<User> getUserById(int id);
 
-    User getUserByEmail(String email);
+    Optional<User> getUserByEmail(String email);
 
     void deleteUser(int id);
 

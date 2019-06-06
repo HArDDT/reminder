@@ -14,6 +14,7 @@ import ua.tihonchik.dmitriy.entities.UserImpl;
 
 import java.sql.Types;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -56,7 +57,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getUserById(int id) {
+    public Optional<User> getUserById(int id) {
 
         String sqlQuery = "select id, email, name, admin, superadmin, password " +
                 "from public.users where id = ?";
@@ -64,7 +65,7 @@ public class UserRepositoryImpl implements UserRepository {
         Object[] eventFields = {id};
 
         try {
-            return template.queryForObject(sqlQuery, eventFields, userRowMapper);
+            return Optional.of(template.queryForObject(sqlQuery, eventFields, userRowMapper));
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with id - " + id + " not found!";
             logger.error(errorMessage);
@@ -74,7 +75,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getUserByEmail(String email) {
+    public Optional<User> getUserByEmail(String email) {
 
         String sqlQuery = "select id, email, name, admin, superadmin, password " +
                 "from public.users where email = ?";
@@ -82,7 +83,7 @@ public class UserRepositoryImpl implements UserRepository {
         Object[] eventFields = {email};
 
         try {
-            return template.queryForObject(sqlQuery, eventFields, userRowMapper);
+            return Optional.of(template.queryForObject(sqlQuery, eventFields, userRowMapper));
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with email - " + email + " not found!";
             logger.error(errorMessage);

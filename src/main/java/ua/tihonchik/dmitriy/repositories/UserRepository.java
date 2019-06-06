@@ -3,14 +3,15 @@ package ua.tihonchik.dmitriy.repositories;
 import ua.tihonchik.dmitriy.entities.User;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface UserRepository {
 
     int createUser(User user);
 
-    User getUserById(int id);
+    Optional<User> getUserById(int id);
 
-    User getUserByEmail(String email);
+    Optional<User> getUserByEmail(String email);
 
     void deleteUser(int id);
 
