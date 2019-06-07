@@ -13,6 +13,7 @@ public class UserAuthentication extends AbstractAuthenticationToken {
     public UserAuthentication(@NotNull User user) {
         super(user.getRoles());
         this.user = user;
+        this.setAuthenticated(true);
     }
 
     @Override

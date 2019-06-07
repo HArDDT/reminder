@@ -42,6 +42,10 @@ dependencies {
 	testCompile group: 'org.testng', name: 'testng', version: '7.0.0-beta4'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation "javax.xml.bind:jaxb-api:2.2.11"
+	implementation "com.sun.xml.bind:jaxb-core:2.2.11"
+	implementation "com.sun.xml.bind:jaxb-impl:2.2.11"
+	implementation "javax.activation:activation:1.1.1"
 }
 
 test {
