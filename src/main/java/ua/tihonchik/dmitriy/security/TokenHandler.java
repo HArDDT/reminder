@@ -4,8 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import ua.tihonchik.dmitriy.services.UserService;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,7 +26,7 @@ public class TokenHandler {
     private static final String JWT_KEY = "jwtReminderKey";
 
     public TokenHandler() {
-        byte[] decodedKey = Base64.getDecoder().decode(JWT_KEY);
+        byte[] decodedKey = Base64.getDecoder().decode(JWT_KEY.getBytes());
         secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
     }
 

@@ -6,13 +6,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.HttpClientErrorException;
 import ua.tihonchik.dmitriy.entities.User;
 import ua.tihonchik.dmitriy.entities.UserImpl;
 import ua.tihonchik.dmitriy.services.UserService;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -25,7 +23,7 @@ public class UserController {
 
     @PostMapping(value = "/protected/create_user")
     public int createEvent(@RequestBody UserImpl user) {
-        return userService.createUser((User) user);
+        return userService.createUser(user);
     }
 
     @GetMapping(value = "/protected/get-user-by-email/{email}")

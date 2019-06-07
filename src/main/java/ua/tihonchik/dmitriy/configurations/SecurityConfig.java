@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "*css", "*js", "/login", "/logout").permitAll()
+                .antMatchers("/", "*css", "*js", "/sing-up", "/logout").permitAll()
                 .antMatchers("/protected/**").authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
