@@ -31,7 +31,7 @@ public class TokenAuthenticationService {
                     .flatMap(service::getUserById)
                     .map(UserAuthentication::new);
         }
-        return null;
+        return Optional.empty();
     }
 
 
