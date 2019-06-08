@@ -1,19 +1,16 @@
 package ua.tihonchik.dmitriy.entities;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import java.time.LocalDateTime;
 
- @JsonDeserialize(as=EventImpl.class)
  public interface Event {
 
-     int getId();
+     Object getId();
 
-     void setId(int id);
+     void setId(Object id);
 
-     int getUserId();
+     Object getUserId();
 
-     void setUserId(int userId);
+     void setUserId(Object userId);
 
      String getDescription();
 

@@ -32,14 +32,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public int createUser(User user) {
+    public Object createUser(User user) {
 
         String sqlQuery = "insert into public.users( " +
-                "email, name, admin, superadmin, password) " +
-                "values (?, ?, ?, ?, ?)" +
+                "id, email, name, admin, superadmin, password) " +
+                "values (?, ?, ?, ?, ?, ?)" +
                 "returning id";
 
         Object[] userFields = {
+                user.getId().toString(),
                 user.getEmail(),
                 user.getName(),
                 user.hasRole("admin"),
@@ -48,7 +49,7 @@ public class UserRepositoryImpl implements UserRepository {
         };
 
         try {
-            return template.queryForObject(sqlQuery, Integer.class, userFields);
+            return template.queryForObject(sqlQuery, Object.class, userFields);
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "UserImpl: " + user.getEmail() + " not created!";
             logger.error(errorMessage, exception);
@@ -57,7 +58,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> getUserById(int id) {
+    public Optional<User> getUserById(Object id) {
 
         String sqlQuery = "select id, email, name, admin, superadmin, password " +
                 "from public.users where id = ?";
@@ -93,7 +94,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteUser(int id) {
+    public void deleteUser(Object id) {
 
         String sqlQuery = "delete from public.users where id = ?;";
 

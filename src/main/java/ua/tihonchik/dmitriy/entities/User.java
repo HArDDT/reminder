@@ -8,9 +8,9 @@ public interface User {
 
     boolean hasRole(String role);
 
-    int getId();
+    Object getId();
 
-    void setId(int id);
+    void setId(Object id);
 
     String getEmail();
 

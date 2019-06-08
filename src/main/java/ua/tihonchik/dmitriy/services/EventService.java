@@ -6,14 +6,14 @@ import java.util.Collection;
 
 public interface EventService {
 
-    int createEvent(Event event);
+    Object createEvent(Event event);
 
-    Event getEvent(int eventId);
+    Event getEvent(Object eventId);
 
     void updateEvent(Event event);
 
-    void deleteEvent(int eventId);
+    void deleteEvent(Object eventId);
 
-    Collection<Event> getEvents(int userId);
+    Collection<Event> getEvents(Object userId);
 
 }

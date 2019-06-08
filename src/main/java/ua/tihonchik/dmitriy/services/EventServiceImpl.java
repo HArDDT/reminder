@@ -5,6 +5,7 @@ import ua.tihonchik.dmitriy.entities.Event;
 import ua.tihonchik.dmitriy.repositories.EventRepository;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @Service
 public class EventServiceImpl implements EventService {
@@ -16,12 +17,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public int createEvent(Event event) {
+    public Object createEvent(Event event) {
+        event.setId(UUID.randomUUID().toString());
         return repository.createEvent(event);
     }
 
     @Override
-    public Event getEvent(int eventId) {
+    public Event getEvent(Object eventId) {
         return repository.getEvent(eventId);
     }
 
@@ -31,12 +33,12 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public void deleteEvent(int eventId) {
+    public void deleteEvent(Object eventId) {
         repository.deleteEvent(eventId);
     }
 
     @Override
-    public Collection<Event> getEvents(int userId) {
+    public Collection<Event> getEvents(Object userId) {
         return repository.getEvents(userId);
     }
 

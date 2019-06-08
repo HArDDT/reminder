@@ -30,22 +30,35 @@ public class TokenHandler {
         secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
     }
 
-    public Optional<Integer> extractUserId(@NotNull String token) {
+    public Optional<Object> extractUserId(@NotNull String token) {
         try {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             Claims body = claimsJws.getBody();
-            return Optional.ofNullable(body.getId()).map(Integer::valueOf);
+            return Optional.ofNullable(body.getId());
         } catch (RuntimeException e) {
             return Optional.empty();
         }
     }
 
-    public String generateAccessToken(@NonNull int id, @NonNull LocalDateTime expires) {
+    public String generateAccessToken(@NonNull Object id, @NonNull LocalDateTime expires) {
         return Jwts.builder()
                 .setId(String.valueOf(id))
                 .setExpiration(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .compact();
+    }
+
+    public boolean tokenIsExpired(@NotNull String token) {
+        try {
+            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Claims body = claimsJws.getBody();
+            LocalDateTime expirationDate = body.getExpiration().toInstant()
+                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+            return expirationDate.isBefore(LocalDateTime.now());
+        } catch (RuntimeException e) {
+            throw new RuntimeException("bad token!");
+        }
     }
 
 }

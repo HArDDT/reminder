@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/protected/create_user")
-    public int createEvent(@RequestBody UserImpl user) {
+    public Object createUser(@RequestBody UserImpl user) {
         return userService.createUser(user);
     }
 
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/protected/get-user-by-id/{id}")
-    public User getUserById(@PathVariable int id){
+    public User getUserById(@PathVariable String id){
         return userService.getUserById(id).orElseGet(null);
     }
 
@@ -42,7 +42,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/protected/delete-user/{id}")
-    public void deleteUser(@PathVariable int id){
+    public void deleteUser(@PathVariable String id){
         userService.deleteUser(id);
     }
 

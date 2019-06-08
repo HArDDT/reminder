@@ -6,6 +6,7 @@ import ua.tihonchik.dmitriy.services.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -21,10 +22,18 @@ public class TokenAuthenticationService {
     }
 
     public Optional<Authentication> getAuthentication(@NotNull HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(AUTH_HEADER_NAME))
-                .flatMap(handler::extractUserId)
-                .flatMap(service::getUserById)
-                .map(UserAuthentication::new);
+
+        String header = request.getHeader(AUTH_HEADER_NAME);
+
+        if (Objects.nonNull(header) && !header.isBlank() && !handler.tokenIsExpired(header)) {
+            return Optional.of(header)
+                    .flatMap(handler::extractUserId)
+                    .flatMap(service::getUserById)
+                    .map(UserAuthentication::new);
+        }
+        return null;
     }
+
+
 
 }

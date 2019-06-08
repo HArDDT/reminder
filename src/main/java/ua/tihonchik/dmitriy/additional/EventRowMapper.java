@@ -15,8 +15,8 @@ public class EventRowMapper implements RowMapper<Event> {
 
     @Override
     public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new EventImpl(rs.getInt("id"),
-                rs.getInt("userid"),
+        return new EventImpl(rs.getString("id"),
+                rs.getString("userid"),
                 rs.getString("description"),
                 LocalDateTime.parse(rs.getString("eventdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 rs.getBoolean("activeevent"),

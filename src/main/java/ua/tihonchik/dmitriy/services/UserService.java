@@ -7,13 +7,13 @@ import java.util.Optional;
 
 public interface UserService {
 
-    int createUser(User user);
+    Object createUser(User user);
 
-    Optional<User> getUserById(int id);
+    Optional<User> getUserById(Object id);
 
     Optional<User> getUserByEmail(String email);
 
-    void deleteUser(int id);
+    void deleteUser(Object id);
 
     Collection<User> getUsers();
 

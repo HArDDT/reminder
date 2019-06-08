@@ -6,12 +6,13 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.UUID;
 
 @Component
 public class EventImpl implements Event {
 
-    private int id;
-    private int userId;
+    private Object id;
+    private Object userId;
     private String description;
     private LocalDateTime eventDate;
     private boolean activeEvent;
@@ -20,7 +21,8 @@ public class EventImpl implements Event {
     public EventImpl() {
     }
 
-    public EventImpl(int userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
+    public EventImpl(Object userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
+        this.id = UUID.randomUUID().toString();
         this.userId = userId;
         this.description = description;
         this.eventDate = ZonedDateTime.parse(eventDate, DateTimeFormatter.RFC_1123_DATE_TIME).toLocalDateTime();
@@ -28,7 +30,7 @@ public class EventImpl implements Event {
         this.reminderExpression = reminderExpression;
     }
 
-    public EventImpl(int id, int userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
+    public EventImpl(Object id, Object userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
         this.id = id;
         this.userId = userId;
         this.description = description;
@@ -37,7 +39,7 @@ public class EventImpl implements Event {
         this.reminderExpression = reminderExpression;
     }
 
-    public EventImpl(int id, int userId, String description, LocalDateTime eventDate, boolean activeEvent, String reminderExpression) {
+    public EventImpl(Object id, Object userId, String description, LocalDateTime eventDate, boolean activeEvent, String reminderExpression) {
         this.id = id;
         this.userId = userId;
         this.description = description;
@@ -47,22 +49,22 @@ public class EventImpl implements Event {
     }
 
     @Override
-    public int getId() {
+    public Object getId() {
         return id;
     }
 
     @Override
-    public void setId(int id) {
+    public void setId(Object id) {
         this.id = id;
     }
 
     @Override
-    public int getUserId() {
+    public Object getUserId() {
         return userId;
     }
 
     @Override
-    public void setUserId(int userId) {
+    public void setUserId(Object userId) {
         this.userId = userId;
     }
 
@@ -116,8 +118,8 @@ public class EventImpl implements Event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EventImpl event = (EventImpl) o;
-        return id == event.id &&
-                userId == event.userId;
+        return Objects.equals(id, event.id) &&
+                Objects.equals(userId, event.userId);
     }
 
     @Override
