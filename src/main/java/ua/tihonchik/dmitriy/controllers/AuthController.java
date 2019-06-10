@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import ua.tihonchik.dmitriy.entities.User;
-import ua.tihonchik.dmitriy.security.TokenHandler;
+import ua.tihonchik.dmitriy.security.TokenHandlerImpl;
 import ua.tihonchik.dmitriy.services.UserService;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,10 +17,10 @@ import java.time.LocalDateTime;
 public class AuthController {
 
     private UserService service;
-    private TokenHandler handler;
+    private TokenHandlerImpl handler;
     private PasswordEncoder passwordEncoder;
 
-    public AuthController(UserService service, TokenHandler handler, PasswordEncoder passwordEncoder) {
+    public AuthController(UserService service, TokenHandlerImpl handler, PasswordEncoder passwordEncoder) {
         this.service = service;
         this.handler = handler;
         this.passwordEncoder = passwordEncoder;
