@@ -1,14 +1,13 @@
 package ua.tihonchik.dmitriy.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ua.tihonchik.dmitriy.services.UserService;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -24,6 +23,7 @@ public class TokenHandler {
 
     private final SecretKey secretKey;
     private static final String JWT_KEY = "jwtReminderKey";
+    private Logger logger = LoggerFactory.getLogger(TokenHandler.class);
 
     public TokenHandler() {
         byte[] decodedKey = Base64.getDecoder().decode(JWT_KEY.getBytes());
@@ -32,33 +32,23 @@ public class TokenHandler {
 
     public Optional<Object> extractUserId(@NotNull String token) {
         try {
-            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            Claims body = claimsJws.getBody();
-            return Optional.ofNullable(body.getId());
-        } catch (RuntimeException e) {
-            return Optional.empty();
+            return Optional.ofNullable(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getId());
+        } catch (ExpiredJwtException ex) {
+            logger.error("token is expire!");
+        } catch (MalformedJwtException ex) {
+            logger.error("incorrect token!");
+        } catch (IllegalArgumentException ex) {
+            logger.error(ex.getMessage());
         }
+        return Optional.empty();
     }
 
     public String generateAccessToken(@NonNull Object id, @NonNull LocalDateTime expires) {
         return Jwts.builder()
                 .setId(String.valueOf(id))
                 .setExpiration(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
-    }
-
-    public boolean tokenIsExpired(@NotNull String token) {
-        try {
-            Jws<Claims> claimsJws = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            Claims body = claimsJws.getBody();
-            LocalDateTime expirationDate = body.getExpiration().toInstant()
-                    .atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-            return expirationDate.isBefore(LocalDateTime.now());
-        } catch (RuntimeException e) {
-            throw new RuntimeException("bad token!");
-        }
     }
 
 }

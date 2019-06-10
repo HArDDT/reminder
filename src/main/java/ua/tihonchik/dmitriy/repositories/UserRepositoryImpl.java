@@ -70,7 +70,7 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with id - " + id + " not found!";
             logger.error(errorMessage);
-            throw new UsernameNotFoundException(errorMessage);
+            return Optional.empty();
         }
 
     }
@@ -88,7 +88,7 @@ public class UserRepositoryImpl implements UserRepository {
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with email - " + email + " not found!";
             logger.error(errorMessage);
-            throw new UsernameNotFoundException(errorMessage);
+            return Optional.empty();
         }
 
     }
