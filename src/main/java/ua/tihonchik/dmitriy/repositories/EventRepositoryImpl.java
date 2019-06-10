@@ -3,9 +3,11 @@ package ua.tihonchik.dmitriy.repositories;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.server.ResponseStatusException;
 import ua.tihonchik.dmitriy.additional.EventRowMapper;
 import ua.tihonchik.dmitriy.entities.Event;
 import ua.tihonchik.dmitriy.exceptions.EventCreationException;
@@ -92,7 +94,14 @@ public class EventRepositoryImpl implements EventRepository {
 
         int[] argTypes = {Types.VARCHAR, Types.TIMESTAMP, Types.BOOLEAN, Types.VARCHAR, Types.VARCHAR};
 
-        int countOfRow = template.update(sqlQuery, eventFields, argTypes);
+        int countOfRow;
+
+        try {
+            countOfRow = template.update(sqlQuery, eventFields, argTypes);
+        } catch (Exception ex) {
+            logger.error("incorrect data!");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "incorrect data!");
+        }
 
         if (countOfRow == 0) {
             String errorMessage = "Event update failed: event with id - " + event.getId() + ", not found!";
