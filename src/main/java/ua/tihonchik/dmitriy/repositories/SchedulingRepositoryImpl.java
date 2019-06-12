@@ -40,49 +40,59 @@ public class SchedulingRepositoryImpl implements SchedulingRepository {
 
     }
 
-    private Map<SimplifiedUser, List<Event>> createMap(SqlRowSet sqlRowSet){
+    private Map<SimplifiedUser, List<Event>> createMap(SqlRowSet sqlRowSet) {
 
         Map<SimplifiedUser, List<Event>> data = new HashMap<>();
 
-        while (sqlRowSet.next()){
-            Optional<SimplifiedUser> optionalUser = data.keySet().stream()
-                    .filter(simplifiedUser -> Objects.equals(simplifiedUser.getId(), sqlRowSet.getString("userid")))
-                    .findFirst();
-            if (optionalUser.isEmpty()){
-                ArrayList<Event> events = new ArrayList<>();
-                events.add(createEvent(sqlRowSet));
-                SimplifiedUser user = createUser(sqlRowSet);
-                data.put(user, events);
-            }
-            else {
-                SimplifiedUser simplifiedUser = optionalUser.get();
-                List<Event> events = data.getOrDefault(simplifiedUser, new ArrayList<>());
-                if(events.isEmpty()){
-                    events.add(createEvent(sqlRowSet));
-                }
-                else {
-                    if(events.stream().filter(event -> event.getId().equals(sqlRowSet.getString("id"))).findFirst().isEmpty()){
-                        events.add(createEvent(sqlRowSet));
-                    }
-                }
-            }
+        while (sqlRowSet.next()) {
+            Optional<SimplifiedUser> optionalUser = findKey(sqlRowSet, data);
 
+            if (optionalUser.isEmpty()) {
+                putIfEmpty(sqlRowSet, data);
+            } else {
+                putIfPresent(sqlRowSet, data, optionalUser);
+            }
         }
 
         return data;
 
     }
 
-    private SimplifiedUser createUser(SqlRowSet sqlRowSet){
+    private Optional<SimplifiedUser> findKey(SqlRowSet sqlRowSet, Map<SimplifiedUser, List<Event>> data) {
+        return data.keySet().stream()
+                .filter(simplifiedUser -> Objects.equals(simplifiedUser.getId(), sqlRowSet.getString("userid")))
+                .findFirst();
+    }
+
+    private void putIfPresent(SqlRowSet sqlRowSet, Map<SimplifiedUser, List<Event>> data, Optional<SimplifiedUser> optionalUser) {
+        SimplifiedUser simplifiedUser = optionalUser.get();
+        List<Event> events = data.getOrDefault(simplifiedUser, new ArrayList<>());
+        if (events.isEmpty()) {
+            events.add(createEvent(sqlRowSet));
+        } else {
+            if (events.stream().filter(event -> event.getId().equals(sqlRowSet.getString("eventid"))).findFirst().isEmpty()) {
+                events.add(createEvent(sqlRowSet));
+            }
+        }
+    }
+
+    private void putIfEmpty(SqlRowSet sqlRowSet, Map<SimplifiedUser, List<Event>> data) {
+        ArrayList<Event> events = new ArrayList<>();
+        events.add(createEvent(sqlRowSet));
+        SimplifiedUser user = createUser(sqlRowSet);
+        data.put(user, events);
+    }
+
+    private SimplifiedUser createUser(SqlRowSet sqlRowSet) {
         return new SimplifiedUser(sqlRowSet.getString("userid"), sqlRowSet.getString("email"), sqlRowSet.getString("name"));
     }
 
-    private Event createEvent(SqlRowSet sqlRowSet){
+    private Event createEvent(SqlRowSet sqlRowSet) {
         return new EventImpl(
                 sqlRowSet.getString("eventid"),
                 sqlRowSet.getString("userid"),
                 sqlRowSet.getString("description"),
-                String.valueOf(sqlRowSet.getTimestamp("eventdate")),
+                sqlRowSet.getTimestamp("eventdate").toLocalDateTime(),
                 true,
                 sqlRowSet.getString("reminderexpression")
         );
