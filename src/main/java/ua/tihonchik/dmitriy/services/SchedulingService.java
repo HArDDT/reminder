@@ -10,4 +10,5 @@ public interface SchedulingService {
 
     Map<SimplifiedUser, List<Event>> getData();
 
+    Map<String, String> emailsWithMessage();
 }

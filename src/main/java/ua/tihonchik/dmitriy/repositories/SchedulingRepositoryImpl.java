@@ -31,7 +31,7 @@ public class SchedulingRepositoryImpl implements SchedulingRepository {
 
         String query = "select events.userid, users.name, users.email, events.id as eventid, events.description, events.eventdate, events.reminderexpression " +
                 "from public.events as events left join public.users as users on events.userid = users.id " +
-                "where events.activeevent and events.eventdate <= CURRENT_TIMESTAMP " +
+                "where events.activeevent " +
                 "order by events.userid;";
 
         SqlRowSet sqlRowSet = template.queryForRowSet(query);
