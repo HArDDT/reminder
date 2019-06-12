@@ -1,23 +1,19 @@
 package ua.tihonchik.dmitriy.entities;
 
-import org.springframework.security.core.GrantedAuthority;
-
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 public class SimplifiedUser implements Serializable {
 
     private Object id;
     private String email;
     private String name;
-    private Set<String> roles;
 
-    public SimplifiedUser(User user) {
-        this.id = user.getId();
-        this.email = user.getEmail();
-        this.name = user.getName();
-        this.roles = user.getRoles().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
+    public SimplifiedUser(@NotNull Object id, @NotNull String email, @NotNull String name) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
     }
 
     public Object getId() {
@@ -44,11 +40,16 @@ public class SimplifiedUser implements Serializable {
         this.name = name;
     }
 
-    public Set<String> getRoles() {
-        return roles;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimplifiedUser that = (SimplifiedUser) o;
+        return Objects.equals(id, that.id);
     }
 
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
