@@ -69,16 +69,16 @@ public class NotificationConverterImpl implements NotificationConverter {
         String regex = "";
         switch (duration) {
             case "day":
-                regex = "0 0 0 * * ?";
+                regex = "59 59 12 * * ?";
                 break;
             case "week":
-                regex = "0 0 0 * * " + dayOfWeek;
+                regex = "0 0 1 * * " + dayOfWeek;
                 break;
             case "month":
-                regex = "0 0 0 " + dayOfMonth + " * ?";
+                regex = "0 0 1 " + dayOfMonth + " * ?";
                 break;
             case "year":
-                regex = "0 0 0 " + dayOfMonth + " " + month + " ?";
+                regex = "0 0 1 " + dayOfMonth + " " + month + " ?";
         }
 
         return regex;
