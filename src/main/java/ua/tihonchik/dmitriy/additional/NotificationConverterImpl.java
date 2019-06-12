@@ -1,6 +1,7 @@
 package ua.tihonchik.dmitriy.additional;
 
 import org.springframework.scheduling.support.CronSequenceGenerator;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 
+@Component
 public class NotificationConverterImpl implements NotificationConverter {
 
     private String expression = "";
