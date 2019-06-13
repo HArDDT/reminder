@@ -55,8 +55,9 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     private String getEvents(Map.Entry mapEntry) {
         return ((List<Event>) mapEntry.getValue()).stream()
-                .filter(event -> converter.getNextValidDate(event.getReminderExpression(), event.getEventDate())
-                        .isEqual(LocalDate.now()))
+                .filter(event -> converter.getNextValidDate(
+                        event.getReminderExpression(),
+                        event.getEventDate()).isEqual(LocalDate.now()))
                 .map(event -> event.getEventDate() + " : " + event.getDescription())
                 .collect(Collectors.joining("\n"));
     }
