@@ -22,13 +22,11 @@ public class SchedulingServiceImpl implements SchedulingService {
     private Logger logger = LoggerFactory.getLogger(SchedulingServiceImpl.class);
     private NotificationConverter converter;
     private EmailService emailService;
-    private SchedulingService schedulingService;
 
-    public SchedulingServiceImpl(SchedulingRepository repository, NotificationConverter converter, EmailService emailService, SchedulingService schedulingService) {
+    public SchedulingServiceImpl(SchedulingRepository repository, NotificationConverter converter, EmailService emailService) {
         this.repository = repository;
         this.converter = converter;
         this.emailService = emailService;
-        this.schedulingService = schedulingService;
     }
 
     @Override
@@ -66,7 +64,7 @@ public class SchedulingServiceImpl implements SchedulingService {
     @Scheduled(cron = "1 0 0 * * ?")
     @Override
     public void sendEmails(){
-        Map<String, String> recipientsWithMessages = schedulingService.emailsWithMessage();
+        Map<String, String> recipientsWithMessages = emailsWithMessage();
         recipientsWithMessages.forEach((recipient, message) -> emailService.sendMessage(recipient,"notification" , message));
     }
 
