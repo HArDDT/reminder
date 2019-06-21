@@ -31,9 +31,13 @@ public class TokenHandlerImpl implements TokenHandler {
     }
 
     @Override
-    public Optional<Object> extractUserId(@NotNull String token) {
+    public Optional<Integer> extractUserId(@NotNull String token) {
         try {
-            return Optional.ofNullable(Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getId());
+            return Optional.ofNullable(Jwts.parser().
+                    setSigningKey(secretKey).
+                    parseClaimsJws(token).
+                    getBody().
+                    getId()).map(Integer::parseInt);
         } catch (ExpiredJwtException ex) {
             logger.error("token is expire!");
         } catch (MalformedJwtException ex) {
@@ -45,7 +49,7 @@ public class TokenHandlerImpl implements TokenHandler {
     }
 
     @Override
-    public String generateAccessToken(@NonNull Object id, @NonNull LocalDateTime expires) {
+    public String generateAccessToken(int id, @NonNull LocalDateTime expires) {
         return Jwts.builder()
                 .setId(String.valueOf(id))
                 .setExpiration(Date.from(expires.atZone(ZoneId.systemDefault()).toInstant()))

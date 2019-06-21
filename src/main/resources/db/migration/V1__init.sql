@@ -1,15 +1,19 @@
-CREATE TABLE users(
-id VARCHAR(500) PRIMARY KEY,
-email VARCHAR(200) UNIQUE,
-name VARCHAR(200),
-admin BOOLEAN NOT NULL,
-superadmin BOOLEAN NOT NULL,
-password VARCHAR(100));
+CREATE TABLE users
+(
+    id         serial PRIMARY KEY NOT NULL,
+    email      VARCHAR(200) UNIQUE,
+    name       VARCHAR(200),
+    admin      BOOLEAN            NOT NULL,
+    superadmin BOOLEAN            NOT NULL,
+    password   VARCHAR(100)
+);
 
-CREATE TABLE events(
-id VARCHAR(500) PRIMARY KEY,
-userid VARCHAR(500) REFERENCES users (id) ON DELETE CASCADE,
-description VARCHAR(500),
-eventdate TIMESTAMP NOT NULL,
-activeevent BOOLEAN NOT NULL,
-reminderexpression VARCHAR(100));
+CREATE TABLE events
+(
+    id                 serial PRIMARY KEY                          NOT NULL,
+    userid             INT REFERENCES users (id) ON DELETE CASCADE NOT NULL,
+    description        VARCHAR(500),
+    eventdate          TIMESTAMP                                   NOT NULL,
+    activeevent        BOOLEAN                                     NOT NULL,
+    reminderexpression VARCHAR(100)
+);

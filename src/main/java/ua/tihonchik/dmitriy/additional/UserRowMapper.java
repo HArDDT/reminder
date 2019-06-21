@@ -27,7 +27,7 @@ public class UserRowMapper implements RowMapper<User> {
             roles.add(new SimpleGrantedAuthority("SUPER_ADMIN"));
         }
 
-        return new User(rs.getString("id"),
+        return new User(rs.getInt("id"),
                 rs.getString("email"),
                 rs.getString("name"),
                 rs.getString("password"),

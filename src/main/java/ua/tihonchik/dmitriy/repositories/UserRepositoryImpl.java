@@ -34,12 +34,11 @@ public class UserRepositoryImpl implements UserRepository {
     public Object createUser(User user) {
 
         String sqlQuery = "insert into public.users( " +
-                "id, email, name, admin, superadmin, password) " +
-                "values (?, ?, ?, ?, ?, ?)" +
+                "email, name, admin, superadmin, password) " +
+                "values (?, ?, ?, ?, ?)" +
                 "returning id";
 
         Object[] userFields = {
-                user.getId().toString(),
                 user.getEmail(),
                 user.getName(),
                 user.hasRole("admin"),
@@ -48,7 +47,7 @@ public class UserRepositoryImpl implements UserRepository {
         };
 
         try {
-            return template.queryForObject(sqlQuery, Object.class, userFields);
+            return template.queryForObject(sqlQuery, Integer.class, userFields);
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "User: " + user.getEmail() + " not created!";
             logger.error(errorMessage, exception);
@@ -57,15 +56,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<User> getUserById(Object id) {
+    public Optional<User> getUserById(int id) {
 
         String sqlQuery = "select id, email, name, admin, superadmin, password " +
                 "from public.users where id = ?";
 
-        Object[] eventFields = {id};
-
         try {
-            return Optional.of(template.queryForObject(sqlQuery, eventFields, userRowMapper));
+            return Optional.of(template.queryForObject(sqlQuery, new Object[] {id}, userRowMapper));
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with id - " + id + " not found!";
             logger.error(errorMessage);
@@ -80,10 +77,8 @@ public class UserRepositoryImpl implements UserRepository {
         String sqlQuery = "select id, email, name, admin, superadmin, password " +
                 "from public.users where email = ?";
 
-        Object[] eventFields = {email};
-
         try {
-            return Optional.of(template.queryForObject(sqlQuery, eventFields, userRowMapper));
+            return Optional.of(template.queryForObject(sqlQuery, new Object[] {email}, userRowMapper));
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with email - " + email + " not found!";
             logger.error(errorMessage);
@@ -93,16 +88,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void deleteUser(Object id) {
+    public void deleteUser(int id) {
 
         String sqlQuery = "delete from public.users where id = ?;";
 
-        Object[] fields = {id};
-        int[] argTypes = {Types.INTEGER};
-        int countOfRow = template.update(sqlQuery, fields, argTypes);
+        int countOfRow = template.update(sqlQuery, new Object[] {id}, new int[] {Types.INTEGER});
 
         if (countOfRow == 0) {
-            String errorMessage = "Deletion error: dashboard with: id - " + id + ", not found!";
+            String errorMessage = "User with id - " + id + ", not found!";
             logger.error(errorMessage);
             throw new UsernameNotFoundException(errorMessage);
         }

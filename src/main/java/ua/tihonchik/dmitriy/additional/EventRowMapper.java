@@ -14,10 +14,11 @@ public class EventRowMapper implements RowMapper<Event> {
 
     @Override
     public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new Event(rs.getString("id"),
-                rs.getString("userid"),
+        return new Event(rs.getInt("id"),
+                rs.getInt("userid"),
                 rs.getString("description"),
-                LocalDateTime.parse(rs.getString("eventdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                LocalDateTime.parse(rs.getString("eventdate"),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 rs.getBoolean("activeevent"),
                 rs.getString("reminderexpression"));
     }

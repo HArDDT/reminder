@@ -69,7 +69,7 @@ public class SchedulingRepositoryImpl implements SchedulingRepository {
         if (events.isEmpty()) {
             events.add(createEvent(sqlRowSet));
         } else {
-            if (events.stream().filter(event -> event.getId().equals(sqlRowSet.getString("eventid"))).findFirst().isEmpty()) {
+            if (events.stream().filter(event -> event.getId() == (sqlRowSet.getInt("eventid"))).findFirst().isEmpty()) {
                 events.add(createEvent(sqlRowSet));
             }
         }
@@ -83,13 +83,13 @@ public class SchedulingRepositoryImpl implements SchedulingRepository {
     }
 
     private SimplifiedUser createUser(SqlRowSet sqlRowSet) {
-        return new SimplifiedUser(sqlRowSet.getString("userid"), sqlRowSet.getString("email"), sqlRowSet.getString("name"));
+        return new SimplifiedUser(sqlRowSet.getInt("userid"), sqlRowSet.getString("email"), sqlRowSet.getString("name"));
     }
 
     private Event createEvent(SqlRowSet sqlRowSet) {
         return new Event(
-                sqlRowSet.getString("eventid"),
-                sqlRowSet.getString("userid"),
+                sqlRowSet.getInt("eventid"),
+                sqlRowSet.getInt("userid"),
                 sqlRowSet.getString("description"),
                 sqlRowSet.getTimestamp("eventdate").toLocalDateTime(),
                 true,

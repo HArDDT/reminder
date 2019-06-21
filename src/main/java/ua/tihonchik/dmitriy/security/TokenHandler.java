@@ -5,8 +5,8 @@ import java.util.Optional;
 
 public interface TokenHandler {
 
-    Optional<Object> extractUserId(String token);
+    Optional<Integer> extractUserId(String token);
 
-    String generateAccessToken(Object id, LocalDateTime expires);
+    String generateAccessToken(int id, LocalDateTime expires);
 
 }
