@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tihonchik.dmitriy.entities.SimplifiedUserToFront;
 import ua.tihonchik.dmitriy.entities.User;
-import ua.tihonchik.dmitriy.entities.UserImpl;
 import ua.tihonchik.dmitriy.services.UserService;
 
 import java.util.Collection;
@@ -25,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/protected/create_user")
-    public Object createUser(@RequestBody UserImpl user) {
+    public Object createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 

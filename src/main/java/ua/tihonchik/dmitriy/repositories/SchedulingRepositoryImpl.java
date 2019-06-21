@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ua.tihonchik.dmitriy.entities.Event;
-import ua.tihonchik.dmitriy.entities.EventImpl;
 import ua.tihonchik.dmitriy.entities.SimplifiedUser;
 
 import java.util.ArrayList;
@@ -88,7 +87,7 @@ public class SchedulingRepositoryImpl implements SchedulingRepository {
     }
 
     private Event createEvent(SqlRowSet sqlRowSet) {
-        return new EventImpl(
+        return new Event(
                 sqlRowSet.getString("eventid"),
                 sqlRowSet.getString("userid"),
                 sqlRowSet.getString("description"),

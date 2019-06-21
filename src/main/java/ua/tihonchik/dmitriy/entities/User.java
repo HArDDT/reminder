@@ -3,29 +3,85 @@ package ua.tihonchik.dmitriy.entities;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Set;
+import java.util.UUID;
 
-public interface User {
+public class User {
 
-    boolean hasRole(String role);
+    private Object id;
+    private String email;
+    private String password;
+    private String name;
+    private Set<GrantedAuthority> roles;
 
-    Object getId();
+    public User() {
+    }
 
-    void setId(Object id);
+    public User(Object id, String email, String name, String password, Set<GrantedAuthority> roles) {
+        this.id = id;
+        this.email = email;
+        this.name = name;
+        this.password = password;
+        this.roles = roles;
+    }
 
-    String getEmail();
+    public User(String email, String password, String name) {
+        this.id = UUID.randomUUID().toString();
+        this.email = email;
+        this.name = name;
+        this.password = password;
+    }
 
-    void setEmail(String email);
+    public boolean hasRole(String role) {
+        return roles.stream().anyMatch((s) -> s.getAuthority().toLowerCase().equals(role.toLowerCase()));
+    }
 
-    String getPassword();
 
-    void setPassword(String password);
+    public Object getId() {
+        return id;
+    }
 
-    String getName();
 
-    void setName(String name);
+    public void setId(Object id) {
+        this.id = id;
+    }
 
-    Set<GrantedAuthority> getRoles();
 
-    void setRoles(Set<GrantedAuthority> roles);
+    public String getEmail() {
+        return email;
+    }
 
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+    public Set<GrantedAuthority> getRoles() {
+        return roles;
+    }
+
+
+    public void setRoles(Set<GrantedAuthority> roles) {
+        this.roles = roles;
+    }
 }

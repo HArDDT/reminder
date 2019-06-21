@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import ua.tihonchik.dmitriy.additional.UserRowMapper;
 import ua.tihonchik.dmitriy.entities.User;
-import ua.tihonchik.dmitriy.entities.UserImpl;
 
 import java.sql.Types;
 import java.util.List;
@@ -23,7 +22,7 @@ public class UserRepositoryImpl implements UserRepository {
     private JdbcTemplate template;
     private PasswordEncoder encoder;
     private Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
-    private RowMapper<UserImpl> userRowMapper;
+    private RowMapper<User> userRowMapper;
 
     public UserRepositoryImpl(JdbcTemplate template, PasswordEncoder encoder, UserRowMapper userRowMapper) {
         this.template = template;
@@ -51,7 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
         try {
             return template.queryForObject(sqlQuery, Object.class, userFields);
         } catch (EmptyResultDataAccessException exception) {
-            String errorMessage = "UserImpl: " + user.getEmail() + " not created!";
+            String errorMessage = "User: " + user.getEmail() + " not created!";
             logger.error(errorMessage, exception);
             throw exception;
         }

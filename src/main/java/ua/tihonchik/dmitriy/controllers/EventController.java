@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tihonchik.dmitriy.entities.Event;
-import ua.tihonchik.dmitriy.entities.EventImpl;
 import ua.tihonchik.dmitriy.services.EventService;
 
 import java.util.Collection;
@@ -32,12 +31,12 @@ public class EventController {
     }
 
     @PostMapping(value = "/protected/create_event")
-    public Object createEvent(@RequestBody EventImpl event) {
+    public Object createEvent(@RequestBody Event event) {
         return eventService.createEvent(event);
     }
 
     @PostMapping(value = "/protected/update_event")
-    public void updateEvent(@RequestBody EventImpl event) {
+    public void updateEvent(@RequestBody Event event) {
         eventService.updateEvent(event);
     }
 

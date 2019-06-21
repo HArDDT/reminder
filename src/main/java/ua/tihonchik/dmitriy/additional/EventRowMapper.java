@@ -3,7 +3,6 @@ package ua.tihonchik.dmitriy.additional;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ua.tihonchik.dmitriy.entities.Event;
-import ua.tihonchik.dmitriy.entities.EventImpl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +14,7 @@ public class EventRowMapper implements RowMapper<Event> {
 
     @Override
     public Event mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return new EventImpl(rs.getString("id"),
+        return new Event(rs.getString("id"),
                 rs.getString("userid"),
                 rs.getString("description"),
                 LocalDateTime.parse(rs.getString("eventdate"), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
