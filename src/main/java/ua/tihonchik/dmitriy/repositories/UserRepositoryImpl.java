@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -22,12 +21,10 @@ public class UserRepositoryImpl implements UserRepository {
     private JdbcTemplate template;
     private PasswordEncoder encoder;
     private Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
-    private RowMapper<User> userRowMapper;
 
-    public UserRepositoryImpl(JdbcTemplate template, PasswordEncoder encoder, UserRowMapper userRowMapper) {
+    public UserRepositoryImpl(JdbcTemplate template, PasswordEncoder encoder) {
         this.template = template;
         this.encoder = encoder;
-        this.userRowMapper = userRowMapper;
     }
 
     @Override
@@ -62,7 +59,7 @@ public class UserRepositoryImpl implements UserRepository {
                 "from public.users where id = ?";
 
         try {
-            return Optional.of(template.queryForObject(sqlQuery, new Object[] {id}, userRowMapper));
+            return Optional.of(template.queryForObject(sqlQuery, new Object[] {id}, new UserRowMapper()));
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with id - " + id + " not found!";
             logger.error(errorMessage);
@@ -78,7 +75,7 @@ public class UserRepositoryImpl implements UserRepository {
                 "from public.users where email = ?";
 
         try {
-            return Optional.of(template.queryForObject(sqlQuery, new Object[] {email}, userRowMapper));
+            return Optional.of(template.queryForObject(sqlQuery, new Object[] {email}, new UserRowMapper()));
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with email - " + email + " not found!";
             logger.error(errorMessage);
@@ -105,7 +102,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public List<User> getUsers() {
         String sqlQuery = "select id, email, name, admin, superadmin, password from public.users;";
-        return template.query(sqlQuery, userRowMapper).stream().collect(Collectors.toList());
+        return template.query(sqlQuery, new UserRowMapper()).stream().collect(Collectors.toList());
     }
 
 }

@@ -5,7 +5,6 @@ import ua.tihonchik.dmitriy.entities.Event;
 import ua.tihonchik.dmitriy.repositories.EventRepository;
 
 import java.util.Collection;
-import java.util.UUID;
 
 @Service
 public class EventServiceImpl implements EventService {

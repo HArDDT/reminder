@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
 import ua.tihonchik.dmitriy.additional.EventRowMapper;
@@ -22,11 +21,9 @@ public class EventRepositoryImpl implements EventRepository {
 
     private JdbcTemplate template;
     private Logger logger = LoggerFactory.getLogger(EventRepositoryImpl.class);
-    private RowMapper<Event> rowMapper;
 
-    public EventRepositoryImpl(JdbcTemplate template, EventRowMapper rowMapper) {
+    public EventRepositoryImpl(JdbcTemplate template) {
         this.template = template;
-        this.rowMapper = rowMapper;
     }
 
     @Override
@@ -57,7 +54,7 @@ public class EventRepositoryImpl implements EventRepository {
 
         String sqlQuery = "select id, userid, description, eventdate, activeevent, reminderexpression from public.events where userid = ?";
 
-        return template.query(sqlQuery, new Object[] {userId}, rowMapper);
+        return template.query(sqlQuery, new Object[] {userId}, new EventRowMapper());
 
     }
 
@@ -67,7 +64,7 @@ public class EventRepositoryImpl implements EventRepository {
         String sqlQuery = "select id, userid, description, eventdate, activeevent, reminderexpression from public.events where id = ?";
 
         try {
-            return template.queryForObject(sqlQuery, new Object[] {eventId}, rowMapper);
+            return template.queryForObject(sqlQuery, new Object[] {eventId}, new EventRowMapper());
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "Event with id - " + eventId + " not found!";
             logger.error(errorMessage);
