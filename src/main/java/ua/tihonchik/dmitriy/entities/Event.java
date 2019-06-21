@@ -6,13 +6,12 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
-import java.util.UUID;
 
 @Component
 public class Event {
 
-    private Object id;
-    private Object userId;
+    private int id;
+    private int userId;
     private String description;
     private LocalDateTime eventDate;
     private boolean activeEvent;
@@ -21,8 +20,7 @@ public class Event {
     public Event() {
     }
 
-    public Event(Object userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
-        this.id = UUID.randomUUID().toString();
+    public Event(int userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
         this.userId = userId;
         this.description = description;
         this.eventDate = ZonedDateTime.parse(eventDate, DateTimeFormatter.RFC_1123_DATE_TIME).toLocalDateTime();
@@ -30,7 +28,7 @@ public class Event {
         this.reminderExpression = reminderExpression;
     }
 
-    public Event(Object id, Object userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
+    public Event(int id, int userId, String description, String eventDate, boolean activeEvent, String reminderExpression) {
         this.id = id;
         this.userId = userId;
         this.description = description;
@@ -39,7 +37,7 @@ public class Event {
         this.reminderExpression = reminderExpression;
     }
 
-    public Event(Object id, Object userId, String description, LocalDateTime eventDate, boolean activeEvent, String reminderExpression) {
+    public Event(int id, int userId, String description, LocalDateTime eventDate, boolean activeEvent, String reminderExpression) {
         this.id = id;
         this.userId = userId;
         this.description = description;
@@ -49,22 +47,22 @@ public class Event {
     }
 
     
-    public Object getId() {
+    public int getId() {
         return id;
     }
 
     
-    public void setId(Object id) {
+    public void setId(int id) {
         this.id = id;
     }
 
     
-    public Object getUserId() {
+    public int getUserId() {
         return userId;
     }
 
     
-    public void setUserId(Object userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
@@ -113,16 +111,16 @@ public class Event {
         this.reminderExpression = reminderExpression;
     }
 
-    
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
-        return Objects.equals(id, event.id) &&
-                Objects.equals(userId, event.userId);
+        return id == event.id &&
+                userId == event.userId;
     }
 
-    
+    @Override
     public int hashCode() {
         return Objects.hash(id, userId);
     }

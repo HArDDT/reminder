@@ -3,11 +3,10 @@ package ua.tihonchik.dmitriy.entities;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Set;
-import java.util.UUID;
 
 public class User {
 
-    private Object id;
+    private int id;
     private String email;
     private String password;
     private String name;
@@ -16,7 +15,7 @@ public class User {
     public User() {
     }
 
-    public User(Object id, String email, String name, String password, Set<GrantedAuthority> roles) {
+    public User(int id, String email, String name, String password, Set<GrantedAuthority> roles) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -25,7 +24,6 @@ public class User {
     }
 
     public User(String email, String password, String name) {
-        this.id = UUID.randomUUID().toString();
         this.email = email;
         this.name = name;
         this.password = password;
@@ -36,12 +34,12 @@ public class User {
     }
 
 
-    public Object getId() {
+    public int getId() {
         return id;
     }
 
 
-    public void setId(Object id) {
+    public void setId(int id) {
         this.id = id;
     }
 

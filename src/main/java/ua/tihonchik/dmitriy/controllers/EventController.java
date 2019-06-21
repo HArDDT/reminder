@@ -22,12 +22,12 @@ public class EventController {
     }
 
     @GetMapping(value = "/protected/events/{userId}")
-    public Collection<Event> getEvents(@PathVariable String userId) {
+    public Collection<Event> getEvents(@PathVariable int userId) {
         return eventService.getEvents(userId);
     }
 
     @GetMapping(value = "/protected/event/{eventId}")
-    public Event getEvent(@PathVariable String eventId) {
+    public Event getEvent(@PathVariable int eventId) {
         return eventService.getEvent(eventId);
     }
 
@@ -42,7 +42,7 @@ public class EventController {
     }
 
     @DeleteMapping(value = "/protected/event/{eventId}")
-    public void deleteEvent(@PathVariable String eventId) {
+    public void deleteEvent(@PathVariable int eventId) {
         eventService.deleteEvent(eventId);
     }
 

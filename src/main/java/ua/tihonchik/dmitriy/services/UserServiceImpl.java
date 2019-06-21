@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public class UserServiceImpl implements UserService {
@@ -23,7 +22,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public Object createUser(User user) {
         user.setRoles(new HashSet<>(Collections.singleton(new SimpleGrantedAuthority("USER"))));
-        user.setId(UUID.randomUUID().toString());
         return repository.createUser(user);
     }
 
@@ -33,12 +31,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUserById(Object id) {
+    public Optional<User> getUserById(int id) {
         return repository.getUserById(id);
     }
 
     @Override
-    public void deleteUser(Object id) {
+    public void deleteUser(int id) {
         repository.deleteUser(id);
     }
 

@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
@@ -59,7 +58,7 @@ public class SchedulingRepositoryImpl implements SchedulingRepository {
 
     private Optional<SimplifiedUser> findKey(SqlRowSet sqlRowSet, Map<SimplifiedUser, List<Event>> data) {
         return data.keySet().stream()
-                .filter(simplifiedUser -> Objects.equals(simplifiedUser.getId(), sqlRowSet.getString("userid")))
+                .filter(simplifiedUser -> simplifiedUser.getId() == sqlRowSet.getInt("userid"))
                 .findFirst();
     }
 
@@ -69,7 +68,9 @@ public class SchedulingRepositoryImpl implements SchedulingRepository {
         if (events.isEmpty()) {
             events.add(createEvent(sqlRowSet));
         } else {
-            if (events.stream().filter(event -> event.getId() == (sqlRowSet.getInt("eventid"))).findFirst().isEmpty()) {
+            if (events.stream().filter(event -> event.getId() == (sqlRowSet.getInt("eventid")))
+                    .findFirst()
+                    .isEmpty()) {
                 events.add(createEvent(sqlRowSet));
             }
         }
@@ -83,7 +84,9 @@ public class SchedulingRepositoryImpl implements SchedulingRepository {
     }
 
     private SimplifiedUser createUser(SqlRowSet sqlRowSet) {
-        return new SimplifiedUser(sqlRowSet.getInt("userid"), sqlRowSet.getString("email"), sqlRowSet.getString("name"));
+        return new SimplifiedUser(sqlRowSet.getInt("userid"),
+                sqlRowSet.getString("email"),
+                sqlRowSet.getString("name"));
     }
 
     private Event createEvent(SqlRowSet sqlRowSet) {
