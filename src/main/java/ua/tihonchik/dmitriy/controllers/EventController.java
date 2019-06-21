@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tihonchik.dmitriy.entities.Event;
@@ -20,27 +21,27 @@ public class EventController {
         this.eventService = eventService;
     }
 
-    @GetMapping(value = "/protected/get_events/{userId}")
+    @GetMapping(value = "/protected/events/{userId}")
     public Collection<Event> getEvents(@PathVariable String userId) {
         return eventService.getEvents(userId);
     }
 
-    @GetMapping(value = "/protected/get_event/{eventId}")
+    @GetMapping(value = "/protected/event/{eventId}")
     public Event getEvent(@PathVariable String eventId) {
         return eventService.getEvent(eventId);
     }
 
-    @PostMapping(value = "/protected/create_event")
+    @PostMapping(value = "/protected/event")
     public Object createEvent(@RequestBody Event event) {
         return eventService.createEvent(event);
     }
 
-    @PostMapping(value = "/protected/update_event")
+    @PutMapping(value = "/protected/event")
     public void updateEvent(@RequestBody Event event) {
         eventService.updateEvent(event);
     }
 
-    @DeleteMapping(value = "/protected/delete_event/{eventId}")
+    @DeleteMapping(value = "/protected/event/{eventId}")
     public void deleteEvent(@PathVariable String eventId) {
         eventService.deleteEvent(eventId);
     }
