@@ -3,22 +3,31 @@ package ua.tihonchik.dmitriy.configurations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
+import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import ua.tihonchik.dmitriy.security.TokenAuthenticationFilter;
+import ua.tihonchik.dmitriy.security.TokenHandler;
+import ua.tihonchik.dmitriy.security.UserDetailsServiceImpl;
+import ua.tihonchik.dmitriy.services.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private TokenAuthenticationFilter filter;
+    private TokenHandler handler;
+    @Autowired
+    private UserService service;
     @Autowired
     private AuthenticationEntryPoint restAuthenticationEntryPoint;
 
@@ -27,7 +36,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .csrf().disable()
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilter(requestHeaderAuthenticationFilter())
                 .authorizeRequests()
                 .antMatchers("/", "*css", "*js", "/sing-up", "/logout").permitAll()
                 .antMatchers("/protected/**").authenticated()
@@ -35,16 +47,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint)
                 .and()
                 .formLogin()
-                //.successHandler(mySuccessHandler)
-                //.failureHandler(myFailureHandler)
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).permitAll();
 
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(preAuthenticatedAuthenticationProvider());
+    }
+
     @Bean
-    public PasswordEncoder bcryptPasswordEncoder() {
+    public UserDetailsService userDetailsService() {
+        return new UserDetailsServiceImpl(handler, service);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public RequestHeaderAuthenticationFilter requestHeaderAuthenticationFilter() throws Exception {
+        RequestHeaderAuthenticationFilter filter = new RequestHeaderAuthenticationFilter();
+        filter.setPrincipalRequestHeader("X-Auth-Token");
+        filter.setAuthenticationManager(authenticationManager());
+        filter.setExceptionIfHeaderMissing(false);
+
+        return filter;
+    }
+
+    @Bean
+    public PreAuthenticatedAuthenticationProvider preAuthenticatedAuthenticationProvider() {
+        PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
+        provider.setPreAuthenticatedUserDetailsService(new UserDetailsByNameServiceWrapper<>(userDetailsService()));
+
+        return provider;
     }
 
 }
