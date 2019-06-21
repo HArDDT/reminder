@@ -10,8 +10,9 @@ import ua.tihonchik.dmitriy.entities.User;
 import ua.tihonchik.dmitriy.security.TokenHandlerImpl;
 import ua.tihonchik.dmitriy.services.UserService;
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
 public class AuthController {
@@ -27,18 +28,15 @@ public class AuthController {
     }
 
     @PostMapping(value = "/sing-up")
-    public void getAuthentication(HttpServletResponse response, @RequestParam("email") String email, @RequestParam("password") String pass) {
+    public Map<String, String> getAuthentication(@RequestParam("email") String email, @RequestParam("password") String pass) {
 
-        try {
-            User userDB = service.getUserByEmail(email)
-                    .filter(user -> user.getEmail().equals(email) && passwordEncoder.matches(pass, user.getPassword()))
-                    .orElseThrow(IllegalAccessException::new);
-            String token = handler.generateAccessToken(userDB.getId(), LocalDateTime.now().plusDays(1));
-            response.addHeader("X-Auth-Token", token);
-        } catch (IllegalAccessException ex) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Forbidden", ex);
-        }
+        User userDB = service.getUserByEmail(email)
+                .filter(user -> user.getEmail().equals(email) && passwordEncoder.matches(pass, user.getPassword()))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials!"));
 
+        String token = handler.generateAccessToken(userDB.getId(), LocalDateTime.now().plusDays(1));
+
+        return Collections.singletonMap("X-Auth-Token", token);
 
     }
 
