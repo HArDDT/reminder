@@ -7,13 +7,13 @@ import java.util.Optional;
 
 public interface UserRepository {
 
-    Object createUser(User user);
+    int createUser(User user);
 
-    Optional<User> getUserById(Object id);
+    Optional<User> getUserById(int id);
 
     Optional<User> getUserByEmail(String email);
 
-    void deleteUser(Object id);
+    void deleteUser(int id);
 
     Collection<User> getUsers();
 

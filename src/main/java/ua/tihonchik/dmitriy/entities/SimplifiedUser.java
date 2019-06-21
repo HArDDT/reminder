@@ -6,21 +6,21 @@ import java.util.Objects;
 
 public class SimplifiedUser implements Serializable {
 
-    private Object id;
+    private int id;
     private String email;
     private String name;
 
-    public SimplifiedUser(@NotNull Object id, @NotNull String email, @NotNull String name) {
+    public SimplifiedUser(int id, @NotNull String email, @NotNull String name) {
         this.id = id;
         this.email = email;
         this.name = name;
     }
 
-    public Object getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -45,7 +45,7 @@ public class SimplifiedUser implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SimplifiedUser that = (SimplifiedUser) o;
-        return Objects.equals(id, that.id);
+        return id == that.id;
     }
 
     @Override
