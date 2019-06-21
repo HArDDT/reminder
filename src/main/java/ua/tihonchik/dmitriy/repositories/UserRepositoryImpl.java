@@ -28,7 +28,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Object createUser(User user) {
+    public int createUser(User user) {
 
         String sqlQuery = "insert into public.users( " +
                 "email, name, admin, superadmin, password) " +

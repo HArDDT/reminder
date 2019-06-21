@@ -2,6 +2,7 @@ package ua.tihonchik.dmitriy.entities;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class User {
@@ -10,7 +11,7 @@ public class User {
     private String email;
     private String password;
     private String name;
-    private Set<GrantedAuthority> roles;
+    private Set<GrantedAuthority> roles = new HashSet<>();
 
     public User() {
     }
