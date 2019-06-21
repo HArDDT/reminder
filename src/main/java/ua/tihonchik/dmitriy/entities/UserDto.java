@@ -6,11 +6,11 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SimplifiedUserToFront extends SimplifiedUser {
+public class UserDto extends SimplifiedUser {
 
     private Set<String> roles;
 
-    public SimplifiedUserToFront(@NonNull User user) {
+    public UserDto(@NonNull User user) {
         super(user.getId(), user.getEmail(), user.getName());
         this.roles = user.getRoles().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
     }

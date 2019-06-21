@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import ua.tihonchik.dmitriy.entities.SimplifiedUserToFront;
+import ua.tihonchik.dmitriy.entities.UserDto;
 import ua.tihonchik.dmitriy.entities.User;
 import ua.tihonchik.dmitriy.services.UserService;
 
@@ -29,18 +29,18 @@ public class UserController {
     }
 
     @GetMapping(value = "/protected/user", params = "mail")
-    public SimplifiedUserToFront getUserByEmail(@RequestParam("mail") String email){
-        return userService.getUserByEmail(email).map(SimplifiedUserToFront::new).orElse(null);
+    public UserDto getUserByEmail(@RequestParam("mail") String email){
+        return userService.getUserByEmail(email).map(UserDto::new).orElse(null);
     }
 
     @GetMapping(value = "/protected/user", params = "id")
-    public SimplifiedUserToFront getUserById(@RequestParam("id") int id){
-        return userService.getUserById(id).map(SimplifiedUserToFront::new).orElse(null);
+    public UserDto getUserById(@RequestParam("id") int id){
+        return userService.getUserById(id).map(UserDto::new).orElse(null);
     }
 
     @GetMapping(value = "/protected/users")
-    public Collection<SimplifiedUserToFront> getUsers(){
-        return userService.getUsers().stream().map(SimplifiedUserToFront::new).collect(Collectors.toSet());
+    public Collection<UserDto> getUsers(){
+        return userService.getUsers().stream().map(UserDto::new).collect(Collectors.toSet());
     }
 
     @DeleteMapping(value = "/protected/user/{id}")
