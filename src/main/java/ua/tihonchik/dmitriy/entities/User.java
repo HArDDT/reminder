@@ -1,7 +1,5 @@
 package ua.tihonchik.dmitriy.entities;
 
-import org.springframework.security.core.GrantedAuthority;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,12 +9,12 @@ public class User {
     private String email;
     private String password;
     private String name;
-    private Set<GrantedAuthority> roles = new HashSet<>();
+    private Set<String> roles = new HashSet<>();
 
     public User() {
     }
 
-    public User(int id, String email, String name, String password, Set<GrantedAuthority> roles) {
+    public User(int id, String email, String name, String password, Set<String> roles) {
         this.id = id;
         this.email = email;
         this.name = name;
@@ -31,7 +29,7 @@ public class User {
     }
 
     public boolean hasRole(String role) {
-        return roles.stream().anyMatch((s) -> s.getAuthority().toLowerCase().equals(role.toLowerCase()));
+        return roles.contains(role.toUpperCase());
     }
 
 
@@ -75,12 +73,12 @@ public class User {
     }
 
 
-    public Set<GrantedAuthority> getRoles() {
+    public Set<String> getRoles() {
         return roles;
     }
 
 
-    public void setRoles(Set<GrantedAuthority> roles) {
+    public void setRoles(Set<String> roles) {
         this.roles = roles;
     }
 }

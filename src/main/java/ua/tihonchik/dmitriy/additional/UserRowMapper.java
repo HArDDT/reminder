@@ -1,7 +1,6 @@
 package ua.tihonchik.dmitriy.additional;
 
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import ua.tihonchik.dmitriy.entities.User;
 
 import java.sql.ResultSet;
@@ -15,14 +14,14 @@ public class UserRowMapper implements RowMapper<User> {
     @Override
     public User mapRow(ResultSet rs, int rowNum) throws SQLException {
 
-        Set roles = new HashSet<>(Collections.singleton(new SimpleGrantedAuthority("USER")));
+        Set<String> roles = new HashSet<>(Collections.singleton("USER"));
 
         if(rs.getBoolean("admin")){
-            roles.add(new SimpleGrantedAuthority("ADMIN"));
+            roles.add("ADMIN");
         }
 
         if(rs.getBoolean("superadmin")){
-            roles.add(new SimpleGrantedAuthority("SUPER_ADMIN"));
+            roles.add("SUPER_ADMIN");
         }
 
         return new User(rs.getInt("id"),
