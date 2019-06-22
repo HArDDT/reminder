@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.TextStyle;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 
 @Component
@@ -23,7 +25,7 @@ public class NotificationConverterImpl implements NotificationConverter {
     @Override
     public LocalDate getNextValidDate(String expression, LocalDateTime eventDate) {
         if (Objects.isNull(expression)) {
-            throw new NullPointerException();
+            throw new IllegalArgumentException("Incorrect expression!");
         }
         String lowerCaseExpression = expression.toLowerCase();
         checkExpression(lowerCaseExpression);
@@ -57,8 +59,8 @@ public class NotificationConverterImpl implements NotificationConverter {
     private String getCronExpression(LocalDateTime eventDate, String expression) {
         String duration = getStringDuration(expression);
         LocalDate firstNotificationDate = getTheFirstNotificationDate(eventDate, expression);
-        String dayOfWeek = firstNotificationDate.getDayOfWeek().toString().substring(0, 3);
-        String month = firstNotificationDate.getMonth().toString().substring(0, 3);
+        String dayOfWeek = firstNotificationDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.UK).toUpperCase();
+        String month = firstNotificationDate.getMonth().getDisplayName(TextStyle.SHORT, Locale.UK).toUpperCase();
         int dayOfMonth = firstNotificationDate.getDayOfMonth();
         String regex = "";
         switch (duration) {
