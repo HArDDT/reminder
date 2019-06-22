@@ -12,9 +12,6 @@ import java.util.Objects;
 @Component
 public class NotificationConverterImpl implements NotificationConverter {
 
-    private String expression = "";
-    private LocalDateTime eventDate = LocalDateTime.now();
-
     /**
      * NotificationConverterImpl - return the next valid date of notification
      *
@@ -31,12 +28,9 @@ public class NotificationConverterImpl implements NotificationConverter {
         String lowerCaseExpression = expression.toLowerCase();
         checkExpression(lowerCaseExpression);
 
-        this.expression = lowerCaseExpression;
-        this.eventDate = eventDate;
-
-        String cronExpression = getCronExpression();
+        String cronExpression = getCronExpression(eventDate, lowerCaseExpression);
         CronSequenceGenerator generator = new CronSequenceGenerator(cronExpression);
-        LocalDate startDayForGenerator = getStartDayForGenerator();
+        LocalDate startDayForGenerator = getStartDayForGenerator(eventDate, lowerCaseExpression);
         Date firstNotificationDate = Date.from(startDayForGenerator.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date nextRunDate = generator.next(firstNotificationDate);
         return nextRunDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -51,8 +45,8 @@ public class NotificationConverterImpl implements NotificationConverter {
         }
     }
 
-    private LocalDate getStartDayForGenerator() {
-        LocalDate notificationDate = getTheFirstNotificationDate();
+    private LocalDate getStartDayForGenerator(LocalDateTime eventDate, String expression) {
+        LocalDate notificationDate = getTheFirstNotificationDate(eventDate, expression);
         LocalDate notificationDateExcluded = notificationDate.minusDays(1);
         if (LocalDate.now().isAfter(notificationDateExcluded)) {
             return LocalDate.now();
@@ -60,9 +54,9 @@ public class NotificationConverterImpl implements NotificationConverter {
         return notificationDateExcluded;
     }
 
-    private String getCronExpression() {
-        String duration = getStringDuration();
-        LocalDate firstNotificationDate = getTheFirstNotificationDate();
+    private String getCronExpression(LocalDateTime eventDate, String expression) {
+        String duration = getStringDuration(expression);
+        LocalDate firstNotificationDate = getTheFirstNotificationDate(eventDate, expression);
         String dayOfWeek = firstNotificationDate.getDayOfWeek().toString().substring(0, 3);
         String month = firstNotificationDate.getMonth().toString().substring(0, 3);
         int dayOfMonth = firstNotificationDate.getDayOfMonth();
@@ -84,12 +78,12 @@ public class NotificationConverterImpl implements NotificationConverter {
         return regex;
     }
 
-    private LocalDate getTheFirstNotificationDate() {
-        int countOfDays = getCountDayBeforeEvent();
+    private LocalDate getTheFirstNotificationDate(LocalDateTime eventDate, String expression) {
+        int countOfDays = getCountDayBeforeEvent(expression);
         return eventDate.minusDays(countOfDays).toLocalDate();
     }
 
-    private String getStringDuration() {
+    private String getStringDuration(String expression) {
         String clearedExpression = expression.replaceAll("(\\d|\\W)", "");
         if (clearedExpression.matches("day")) return "day";
         if (clearedExpression.matches("week")) return "week";
@@ -98,7 +92,7 @@ public class NotificationConverterImpl implements NotificationConverter {
         return "";
     }
 
-    private int getCountDayBeforeEvent() {
+    private int getCountDayBeforeEvent(String expression) {
         return Integer.parseInt(expression.replaceAll("(\\D|\\W)", ""));
     }
 
