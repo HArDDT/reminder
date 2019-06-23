@@ -9,7 +9,7 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:properties/datasource.properties")
+@PropertySource("classpath:properties/db/datasource.properties")
 public class DataSourceConfig {
 
     @Bean

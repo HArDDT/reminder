@@ -2,6 +2,8 @@ package ua.tihiy.reminder.repositories;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,21 +19,22 @@ import java.sql.Types;
 import java.util.Collection;
 
 @Repository
+@PropertySource("classpath:properties/sql/queries.properties")
 public class EventRepositoryImpl implements EventRepository {
 
     private JdbcTemplate template;
     private Logger logger = LoggerFactory.getLogger(EventRepositoryImpl.class);
+    private Environment environment;
 
-    public EventRepositoryImpl(JdbcTemplate template) {
+    public EventRepositoryImpl(JdbcTemplate template, Environment environment) {
         this.template = template;
+        this.environment = environment;
     }
 
     @Override
     public int createEvent(Event event) {
 
-        String sqlQuery = "insert into public.events(userid, description, eventdate, activeevent, reminderexpression) " +
-                "values (?, ?, ?, ?, ? )" +
-                "RETURNING id";
+        String sqlQuery = environment.getProperty("event.create");
 
         Object[] eventFields = {
                 event.getUserId(),
@@ -52,7 +55,7 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public Collection<Event> getEvents(int userId) {
 
-        String sqlQuery = "select id, userid, description, eventdate, activeevent, reminderexpression from public.events where userid = ?";
+        String sqlQuery = environment.getProperty("event.get.all.by.userid");
 
         return template.query(sqlQuery, new Object[] {userId}, new EventRowMapper());
 
@@ -61,7 +64,7 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public Event getEvent(int eventId) {
 
-        String sqlQuery = "select id, userid, description, eventdate, activeevent, reminderexpression from public.events where id = ?";
+        String sqlQuery = environment.getProperty("event.get.by.id");
 
         try {
             return template.queryForObject(sqlQuery, new Object[] {eventId}, new EventRowMapper());
@@ -76,7 +79,7 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public void updateEvent(Event event) {
 
-        String sqlQuery = "update public.events set description = ?, eventdate = ?, activeevent = ?, reminderexpression = ? where id = ?";
+        String sqlQuery = environment.getProperty("event.update");
 
         Object[] eventFields = {event.getDescription(),
                 event.getEventDate(),
@@ -106,7 +109,7 @@ public class EventRepositoryImpl implements EventRepository {
     @Override
     public void deleteEvent(int eventId) {
 
-        String sqlQuery = "delete from public.events where id = ?";
+        String sqlQuery = environment.getProperty("event.delete");
 
         int countOfRow = template.update(sqlQuery, new Object[] {eventId}, new int[] {Types.INTEGER});
 
