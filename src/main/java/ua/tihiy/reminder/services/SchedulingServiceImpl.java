@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ua.tihiy.reminder.additional.NotificationConverter;
+import ua.tihiy.reminder.additional.NotificationService;
 import ua.tihiy.reminder.entities.Event;
 import ua.tihiy.reminder.entities.SimplifiedUser;
 import ua.tihiy.reminder.repositories.SchedulingRepository;
@@ -20,12 +20,12 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     private SchedulingRepository repository;
     private Logger logger = LoggerFactory.getLogger(SchedulingServiceImpl.class);
-    private NotificationConverter converter;
+    private NotificationService notificationService;
     private EmailService emailService;
 
-    public SchedulingServiceImpl(SchedulingRepository repository, NotificationConverter converter, EmailService emailService) {
+    public SchedulingServiceImpl(SchedulingRepository repository, NotificationService notificationService, EmailService emailService) {
         this.repository = repository;
-        this.converter = converter;
+        this.notificationService = notificationService;
         this.emailService = emailService;
     }
 
@@ -55,7 +55,7 @@ public class SchedulingServiceImpl implements SchedulingService {
 
     private String getEvents(Map.Entry mapEntry) {
         return ((List<Event>) mapEntry.getValue()).stream()
-                .filter(event -> converter.getNextValidDate(
+                .filter(event -> notificationService.getNextValidDate(
                         event.getReminderExpression(),
                         event.getEventDate()).isEqual(LocalDate.now()))
                 .map(event -> event.getEventDate() + " : " + event.getDescription())
