@@ -2,6 +2,8 @@ package ua.tihiy.reminder.repositories;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
@@ -15,22 +17,22 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
+@PropertySource("classpath:properties/sql/queries.properties")
 public class SchedulingRepositoryImpl implements SchedulingRepository {
 
     private JdbcTemplate template;
     private Logger logger = LoggerFactory.getLogger(SchedulingRepositoryImpl.class);
+    private Environment environment;
 
-    public SchedulingRepositoryImpl(JdbcTemplate template) {
+    public SchedulingRepositoryImpl(JdbcTemplate template, Environment environment) {
         this.template = template;
+        this.environment = environment;
     }
 
     @Override
     public Map<SimplifiedUser, List<Event>> getData() {
 
-        String query = "select events.userid, users.name, users.email, events.id as eventid, events.description, events.eventdate, events.reminderexpression " +
-                "from public.events as events left join public.users as users on events.userid = users.id " +
-                "where events.activeevent " +
-                "order by events.userid;";
+        String query = environment.getProperty("scheduling.data");
 
         SqlRowSet sqlRowSet = template.queryForRowSet(query);
 
