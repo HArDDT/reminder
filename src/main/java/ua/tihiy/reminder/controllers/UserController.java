@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ua.tihiy.reminder.entities.User;
-import ua.tihiy.reminder.entities.UserDto;
+import ua.tihiy.reminder.dto.UserDto;
 import ua.tihiy.reminder.services.UserService;
 
 import java.util.Collection;

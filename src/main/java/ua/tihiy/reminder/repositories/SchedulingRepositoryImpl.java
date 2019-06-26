@@ -7,7 +7,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import ua.tihiy.reminder.entities.SimplifiedUser;
+import ua.tihiy.reminder.dto.SimplifiedUser;
 import ua.tihiy.reminder.entities.Event;
 
 import java.util.ArrayList;

@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ua.tihiy.reminder.additional.NotificationService;
+import ua.tihiy.reminder.scheduling.NotificationService;
 import ua.tihiy.reminder.entities.Event;
-import ua.tihiy.reminder.entities.SimplifiedUser;
+import ua.tihiy.reminder.dto.SimplifiedUser;
 import ua.tihiy.reminder.repositories.SchedulingRepository;
 
 import java.time.LocalDate;

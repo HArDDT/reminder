@@ -1,10 +1,11 @@
-package ua.tihiy.reminder.additional;
+package ua.tihiy.reminder.scheduling;
 
 import org.springframework.stereotype.Component;
-import ua.tihiy.reminder.additional.converters.NotificationConverterDay;
-import ua.tihiy.reminder.additional.converters.NotificationConverterMonth;
-import ua.tihiy.reminder.additional.converters.NotificationConverterWeek;
-import ua.tihiy.reminder.additional.converters.NotificationConverterYear;
+import ua.tihiy.reminder.scheduling.converters.NotificationConverter;
+import ua.tihiy.reminder.scheduling.converters.NotificationConverterDay;
+import ua.tihiy.reminder.scheduling.converters.NotificationConverterMonth;
+import ua.tihiy.reminder.scheduling.converters.NotificationConverterWeek;
+import ua.tihiy.reminder.scheduling.converters.NotificationConverterYear;
 
 import javax.validation.constraints.NotNull;
 import java.util.Objects;

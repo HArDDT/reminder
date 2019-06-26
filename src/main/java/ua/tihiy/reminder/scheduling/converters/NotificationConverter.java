@@ -1,4 +1,4 @@
-package ua.tihiy.reminder.additional;
+package ua.tihiy.reminder.scheduling.converters;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

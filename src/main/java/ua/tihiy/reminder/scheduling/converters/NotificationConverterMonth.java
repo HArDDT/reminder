@@ -1,16 +1,13 @@
-package ua.tihiy.reminder.additional.converters;
+package ua.tihiy.reminder.scheduling.converters;
 
 import org.springframework.scheduling.support.CronSequenceGenerator;
-import ua.tihiy.reminder.additional.NotificationConverter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.TextStyle;
 import java.util.Date;
-import java.util.Locale;
 
-public class NotificationConverterWeek implements NotificationConverter {
+public class NotificationConverterMonth implements NotificationConverter {
 
     @Override
     public LocalDate getNextValidDate(String expression, LocalDateTime eventDate) {
@@ -36,8 +33,8 @@ public class NotificationConverterWeek implements NotificationConverter {
 
     private String getCronExpression(LocalDateTime eventDate, String expression) {
         LocalDate firstNotificationDate = getTheFirstNotificationDate(eventDate, expression);
-        String dayOfWeek = firstNotificationDate.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.UK).toUpperCase();
-        return "0 0 1 * * " + dayOfWeek;
+        int dayOfMonth = firstNotificationDate.getDayOfMonth();
+        return "0 0 1 " + dayOfMonth + " * ?";
     }
 
     private LocalDate getTheFirstNotificationDate(LocalDateTime eventDate, String expression) {

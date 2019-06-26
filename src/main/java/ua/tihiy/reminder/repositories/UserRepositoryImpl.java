@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ua.tihiy.reminder.additional.UserRowMapper;
+import ua.tihiy.reminder.entities.rowmappers.UserRowMapper;
 import ua.tihiy.reminder.entities.User;
 
 import javax.validation.constraints.NotNull;

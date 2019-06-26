@@ -1,4 +1,4 @@
-package ua.tihiy.reminder.entities;
+package ua.tihiy.reminder.dto;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;

@@ -1,6 +1,7 @@
-package ua.tihiy.reminder.entities;
+package ua.tihiy.reminder.dto;
 
 import org.springframework.lang.NonNull;
+import ua.tihiy.reminder.entities.User;
 
 import java.util.Set;
 

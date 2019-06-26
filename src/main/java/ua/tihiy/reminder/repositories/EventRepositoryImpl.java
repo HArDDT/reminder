@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
-import ua.tihiy.reminder.additional.EventRowMapper;
+import ua.tihiy.reminder.entities.rowmappers.EventRowMapper;
 import ua.tihiy.reminder.exceptions.EventCreationException;
 import ua.tihiy.reminder.exceptions.EventDeleteException;
 import ua.tihiy.reminder.exceptions.EventNotFoundException;

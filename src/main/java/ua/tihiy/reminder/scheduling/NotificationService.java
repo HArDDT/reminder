@@ -1,6 +1,7 @@
-package ua.tihiy.reminder.additional;
+package ua.tihiy.reminder.scheduling;
 
 import org.springframework.stereotype.Component;
+import ua.tihiy.reminder.scheduling.converters.NotificationConverter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

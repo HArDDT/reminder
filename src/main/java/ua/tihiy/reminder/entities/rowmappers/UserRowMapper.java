@@ -1,4 +1,4 @@
-package ua.tihiy.reminder.additional;
+package ua.tihiy.reminder.entities.rowmappers;
 
 import org.springframework.jdbc.core.RowMapper;
 import ua.tihiy.reminder.entities.User;
