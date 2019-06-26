@@ -6,11 +6,13 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import ua.tihiy.reminder.entities.rowmappers.UserRowMapper;
 import ua.tihiy.reminder.entities.User;
+import ua.tihiy.reminder.entities.rowmappers.UserRowMapper;
+import ua.tihiy.reminder.exceptions.UserCreationException;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Types;
@@ -43,15 +45,18 @@ public class UserRepositoryImpl implements UserRepository {
                 user.getName(),
                 user.hasRole("admin"),
                 user.hasRole("super_admin"),
-                encoder.encode(user.getPassword())
+                encoder.encode(user.getPassword()),
+                user.getEmail()
         };
 
-        try {
-            return template.queryForObject(sqlQuery, Integer.class, userFields);
-        } catch (EmptyResultDataAccessException exception) {
-            String errorMessage = "User: " + user.getEmail() + " not created!";
-            logger.error(errorMessage, exception);
-            throw exception;
+        SqlRowSet rowSet = template.queryForRowSet(sqlQuery, userFields);
+
+        if (rowSet.next()) {
+            return rowSet.getInt("id");
+        } else {
+            String errorMessage = "User with email: " + user.getEmail() + " is exist!";
+            logger.error(errorMessage);
+            throw new UserCreationException(errorMessage);
         }
     }
 
@@ -59,7 +64,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> getUserById(int id) {
         String sqlQuery = environment.getProperty("user.get.by.id");
         try {
-            return Optional.of(template.queryForObject(sqlQuery, new Object[] {id}, new UserRowMapper()));
+            return Optional.of(template.queryForObject(sqlQuery, new Object[]{id}, new UserRowMapper()));
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with id - " + id + " not found!";
             logger.error(errorMessage);
@@ -71,7 +76,7 @@ public class UserRepositoryImpl implements UserRepository {
     public Optional<User> getUserByEmail(@NotNull String email) {
         String sqlQuery = environment.getProperty("user.get.by.email");
         try {
-            return Optional.of(template.queryForObject(sqlQuery, new Object[] {email}, new UserRowMapper()));
+            return Optional.of(template.queryForObject(sqlQuery, new Object[]{email}, new UserRowMapper()));
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "The user with email - " + email + " not found!";
             logger.error(errorMessage);
@@ -82,7 +87,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void deleteUser(int id) {
         String sqlQuery = environment.getProperty("user.delete");
-        int countOfRow = template.update(sqlQuery, new Object[] {id}, new int[] {Types.INTEGER});
+        int countOfRow = template.update(sqlQuery, new Object[]{id}, new int[]{Types.INTEGER});
         if (countOfRow == 0) {
             String errorMessage = "User with id - " + id + ", not found!";
             logger.error(errorMessage);

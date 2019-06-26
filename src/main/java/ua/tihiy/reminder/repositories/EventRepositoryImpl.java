@@ -7,13 +7,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
+import ua.tihiy.reminder.entities.Event;
 import ua.tihiy.reminder.entities.rowmappers.EventRowMapper;
 import ua.tihiy.reminder.exceptions.EventCreationException;
 import ua.tihiy.reminder.exceptions.EventDeleteException;
 import ua.tihiy.reminder.exceptions.EventNotFoundException;
-import ua.tihiy.reminder.entities.Event;
 
 import java.sql.Types;
 import java.util.Collection;
@@ -41,13 +42,17 @@ public class EventRepositoryImpl implements EventRepository {
                 event.getDescription(),
                 event.getEventDate(),
                 event.isActiveEvent(),
-                event.getReminderExpression()};
-        try {
-            return template.queryForObject(sqlQuery, Integer.class, eventFields);
-        } catch (Exception exception) {
+                event.getReminderExpression(),
+                event.getUserId()};
+
+        SqlRowSet rowSet = template.queryForRowSet(sqlQuery, eventFields);
+
+        if (rowSet.next()) {
+            return rowSet.getInt("id");
+        } else {
             String errorMessage = "User with id - " + event.getUserId() + " not found!";
             logger.error(errorMessage);
-            throw new EventCreationException(errorMessage, exception);
+            throw new EventCreationException(errorMessage);
         }
 
     }
@@ -57,7 +62,7 @@ public class EventRepositoryImpl implements EventRepository {
 
         String sqlQuery = environment.getProperty("event.get.all.by.userid");
 
-        return template.query(sqlQuery, new Object[] {userId}, new EventRowMapper());
+        return template.query(sqlQuery, new Object[]{userId}, new EventRowMapper());
 
     }
 
@@ -67,7 +72,7 @@ public class EventRepositoryImpl implements EventRepository {
         String sqlQuery = environment.getProperty("event.get.by.id");
 
         try {
-            return template.queryForObject(sqlQuery, new Object[] {eventId}, new EventRowMapper());
+            return template.queryForObject(sqlQuery, new Object[]{eventId}, new EventRowMapper());
         } catch (EmptyResultDataAccessException exception) {
             String errorMessage = "Event with id - " + eventId + " not found!";
             logger.error(errorMessage);
@@ -111,7 +116,7 @@ public class EventRepositoryImpl implements EventRepository {
 
         String sqlQuery = environment.getProperty("event.delete");
 
-        int countOfRow = template.update(sqlQuery, new Object[] {eventId}, new int[] {Types.INTEGER});
+        int countOfRow = template.update(sqlQuery, new Object[]{eventId}, new int[]{Types.INTEGER});
 
         if (countOfRow == 0) {
             String errorMessage = "Event with id - " + eventId + " not found!";
