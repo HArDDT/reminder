@@ -62,26 +62,32 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<User> getUserById(int id) {
+
         String sqlQuery = environment.getProperty("user.get.by.id");
-        try {
-            return Optional.of(template.queryForObject(sqlQuery, new Object[]{id}, new UserRowMapper()));
-        } catch (EmptyResultDataAccessException exception) {
+        SqlRowSet rowSet = template.queryForRowSet(sqlQuery, id);
+        if (rowSet.next()) {
+            return Optional.of(UserRowMapper.getUser(rowSet));
+        } else {
             String errorMessage = "The user with id - " + id + " not found!";
             logger.error(errorMessage);
             return Optional.empty();
         }
+
     }
 
     @Override
     public Optional<User> getUserByEmail(@NotNull String email) {
+
         String sqlQuery = environment.getProperty("user.get.by.email");
-        try {
-            return Optional.of(template.queryForObject(sqlQuery, new Object[]{email}, new UserRowMapper()));
-        } catch (EmptyResultDataAccessException exception) {
+        SqlRowSet rowSet = template.queryForRowSet(sqlQuery, email);
+        if (rowSet.next()) {
+            return Optional.of(UserRowMapper.getUser(rowSet));
+        } else {
             String errorMessage = "The user with email - " + email + " not found!";
             logger.error(errorMessage);
             return Optional.empty();
         }
+
     }
 
     @Override
