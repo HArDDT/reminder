@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -70,10 +69,10 @@ public class EventRepositoryImpl implements EventRepository {
     public Event getEvent(int eventId) {
 
         String sqlQuery = environment.getProperty("event.get.by.id");
-
-        try {
-            return template.queryForObject(sqlQuery, new Object[]{eventId}, new EventRowMapper());
-        } catch (EmptyResultDataAccessException exception) {
+        SqlRowSet rowSet = template.queryForRowSet(sqlQuery, eventId);
+        if (rowSet.next()) {
+            return EventRowMapper.getEvent(rowSet);
+        } else {
             String errorMessage = "Event with id - " + eventId + " not found!";
             logger.error(errorMessage);
             throw new EventNotFoundException(errorMessage);
@@ -99,8 +98,9 @@ public class EventRepositoryImpl implements EventRepository {
         try {
             countOfRow = template.update(sqlQuery, eventFields, argTypes);
         } catch (Exception ex) {
-            logger.error("incorrect data!");
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "incorrect data!");
+            String errorMessage = "Incorrect data!";
+            logger.error(errorMessage);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
         }
 
         if (countOfRow == 0) {
