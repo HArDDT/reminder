@@ -3,7 +3,7 @@ package ua.tihiy.reminder.security;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ua.tihiy.reminder.entities.User;
+import ua.tihiy.reminder.users.User;
 
 import java.util.Collection;
 import java.util.stream.Collectors;

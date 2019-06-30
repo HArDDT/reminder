@@ -3,8 +3,8 @@ package ua.tihiy.reminder.security;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import ua.tihiy.reminder.entities.User;
-import ua.tihiy.reminder.services.UserService;
+import ua.tihiy.reminder.users.User;
+import ua.tihiy.reminder.users.UserService;
 
 public class UserDetailsServiceImpl implements UserDetailsService {
 
