@@ -86,4 +86,16 @@ public class ReminderApplicationTests extends AbstractTestNGSpringContextTests {
         service.deleteUser(actualValue);
     }
 
+
+//    @Test TODO current sql query not supported in h2 database
+    public void createUser() {
+
+        User user = new User("test.user@gmail.com", "123", "test user");
+        int id = service.createUser(user);
+        Optional<User> userById = service.getUserById(id);
+        Assert.assertFalse(userById.isEmpty());
+        Assert.assertEquals(id, userById.get().getId());
+
+    }
+
 }
