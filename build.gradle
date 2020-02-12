@@ -46,8 +46,5 @@ dependencies {
 	implementation "com.sun.xml.bind:jaxb-core:2.2.11"
 	implementation "com.sun.xml.bind:jaxb-impl:2.2.11"
 	implementation "javax.activation:activation:1.1.1"
-}
-
-test {
-	useTestNG {}
+	testCompile group: 'org.testng', name: 'testng', version: '6.14.3'
 }
