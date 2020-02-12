@@ -1,5 +1,5 @@
 plugins {
-	id 'org.springframework.boot' version '2.1.4.RELEASE'
+	id 'org.springframework.boot' version '2.2.4.RELEASE'
 	id 'java'
 }
 
@@ -16,7 +16,7 @@ allprojects {
 }
 
 wrapper {
-	gradleVersion = '5.4'
+	gradleVersion = '6.1.1'
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -39,7 +39,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compile group: 'org.flywaydb', name: 'flyway-core', version: '5.2.4'
 	compile group: 'org.webjars', name: 'bootstrap', version: '4.3.1'
-	testCompile group: 'org.testng', name: 'testng', version: '7.0.0-beta4'
+	testCompile group: 'org.testng', name: 'testng', version: '7.1.0'
+	compile group: 'com.h2database', name: 'h2', version: '1.4.200'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation "javax.xml.bind:jaxb-api:2.2.11"
