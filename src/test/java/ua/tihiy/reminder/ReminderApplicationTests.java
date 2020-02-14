@@ -13,6 +13,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import ua.tihiy.reminder.users.User;
+import ua.tihiy.reminder.users.UserCreationException;
 import ua.tihiy.reminder.users.UserService;
 
 import javax.sql.DataSource;
@@ -87,7 +88,7 @@ public class ReminderApplicationTests extends AbstractTestNGSpringContextTests {
     }
 
 
-//    @Test TODO current sql query not supported in h2 database
+    @Test
     public void createUser() {
 
         User user = new User("test.user@gmail.com", "123", "test user");
@@ -96,6 +97,12 @@ public class ReminderApplicationTests extends AbstractTestNGSpringContextTests {
         Assert.assertFalse(userById.isEmpty());
         Assert.assertEquals(id, userById.get().getId());
 
+    }
+
+    @Test(expectedExceptions = {UserCreationException.class})
+    public void userIsExist() {
+        User user = new User("mike@ukr.net", "123", "mike");
+        service.createUser(user);
     }
 
 }

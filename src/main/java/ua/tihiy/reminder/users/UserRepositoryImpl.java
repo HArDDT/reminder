@@ -4,13 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
@@ -36,24 +40,27 @@ public class UserRepositoryImpl implements UserRepository {
 
         String sqlQuery = environment.getProperty("user.create");
 
-        Object[] userFields = {
-                user.getEmail(),
-                user.getName(),
-                user.hasRole("admin"),
-                user.hasRole("super_admin"),
-                encoder.encode(user.getPassword()),
-                user.getEmail()
-        };
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        try {
+            template.update(connection -> {
+                PreparedStatement ps = connection
+                        .prepareStatement(sqlQuery, new String[]{"id"});
+                ps.setString(1, user.getEmail());
+                ps.setString(2, user.getName());
+                ps.setBoolean(3, user.hasRole("admin"));
+                ps.setBoolean(4, user.hasRole("super_admin"));
+                ps.setString(5, user.getEmail());
+                return ps;
+            }, keyHolder);
 
-        SqlRowSet rowSet = template.queryForRowSet(sqlQuery, userFields);
+            return (int) keyHolder.getKey();
 
-        if (rowSet.next()) {
-            return rowSet.getInt("id");
-        } else {
+        } catch (DuplicateKeyException ex) {
             String errorMessage = "User with email: " + user.getEmail() + " is exist!";
             logger.error(errorMessage);
             throw new UserCreationException(errorMessage);
         }
+
     }
 
     @Override
