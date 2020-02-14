@@ -1,8 +1,7 @@
-package ua.tihiy.reminder;
+package ua.tihiy.reminder.integration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -19,15 +18,15 @@ import ua.tihiy.reminder.users.UserService;
 import javax.sql.DataSource;
 import java.util.Optional;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class ReminderApplicationTests extends AbstractTestNGSpringContextTests {
-
-    @Autowired
-    UserService service;
+public class UsersTests extends AbstractTestNGSpringContextTests {
 
     @Autowired
     DataSource dataSource;
+
+    @Autowired
+    UserService service;
 
     @BeforeMethod
     public void setUpData() {
