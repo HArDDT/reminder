@@ -10,6 +10,7 @@ import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import ua.tihiy.reminder.events.EventCreationException;
 import ua.tihiy.reminder.events.repeatable.RepeatableEvent;
 import ua.tihiy.reminder.events.repeatable.RepeatableEventService;
 
@@ -43,6 +44,21 @@ public class MultiEventsTests extends AbstractTestNGSpringContextTests {
     public void getRepeatableEventsByUserIdAndEventId() {
         final RepeatableEvent eventFromDb = service.getEvent(1);
         Assert.assertEquals(eventFromDb.getId(), 1);
+    }
+
+    @Test(groups = {"MultiEventsTests"})
+    public void createRepeatableEventsByUserId() {
+        RepeatableEvent event = new RepeatableEvent(2, "test description", "Fri, 14 Feb 2020 15:01:26 GMT", true, "3, day");
+        int id = service.createEvent(event);
+        RepeatableEvent eventById = service.getEvent(id);
+        Assert.assertEquals(id, eventById.getId());
+        Assert.assertEquals("test description", eventById.getDescription());
+    }
+
+    @Test(groups = {"MultiEventsTests"}, expectedExceptions = EventCreationException.class)
+    public void createRepeatableEventsWithInvalidUserId() {
+        RepeatableEvent event = new RepeatableEvent(100, "test description", "Fri, 14 Feb 2020 15:01:26 GMT", true, "3, day");
+        service.createEvent(event);
     }
 
 }

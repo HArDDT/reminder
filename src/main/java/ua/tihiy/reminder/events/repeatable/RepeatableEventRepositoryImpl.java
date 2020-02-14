@@ -4,8 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.server.ResponseStatusException;
@@ -13,6 +16,8 @@ import ua.tihiy.reminder.events.EventCreationException;
 import ua.tihiy.reminder.events.EventDeleteException;
 import ua.tihiy.reminder.events.EventNotFoundException;
 
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Collection;
 
@@ -34,19 +39,22 @@ public class RepeatableEventRepositoryImpl implements RepeatableEventRepository 
 
         String sqlQuery = environment.getProperty("event.create");
 
-        Object[] eventFields = {
-                repeatableEvent.getUserId(),
-                repeatableEvent.getDescription(),
-                repeatableEvent.getEventDate(),
-                repeatableEvent.isActiveEvent(),
-                repeatableEvent.getReminderExpression(),
-                repeatableEvent.getUserId()};
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        try {
+            template.update(connection -> {
+                PreparedStatement ps = connection
+                        .prepareStatement(sqlQuery, new String[]{"id"});
+                ps.setInt(1, repeatableEvent.getUserId());
+                ps.setString(2, repeatableEvent.getDescription());
+                ps.setTimestamp(3, Timestamp.valueOf(repeatableEvent.getEventDate()));
+                ps.setBoolean(4, repeatableEvent.isActiveEvent());
+                ps.setString(5, repeatableEvent.getReminderExpression());
+                return ps;
+            }, keyHolder);
 
-        SqlRowSet rowSet = template.queryForRowSet(sqlQuery, eventFields);
+            return (int) keyHolder.getKey();
 
-        if (rowSet.next()) {
-            return rowSet.getInt("id");
-        } else {
+        } catch (DataIntegrityViolationException exception) {
             String errorMessage = "User with id - " + repeatableEvent.getUserId() + " not found!";
             logger.error(errorMessage);
             throw new EventCreationException(errorMessage);
