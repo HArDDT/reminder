@@ -90,13 +90,11 @@ public class ReminderApplicationTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void createUser() {
-
         User user = new User("test.user@gmail.com", "123", "test user");
         int id = service.createUser(user);
         Optional<User> userById = service.getUserById(id);
         Assert.assertFalse(userById.isEmpty());
         Assert.assertEquals(id, userById.get().getId());
-
     }
 
     @Test(expectedExceptions = {UserCreationException.class})
